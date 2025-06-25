@@ -1,0 +1,86 @@
+{% extends 'home/etapa3.html' %} {# Asegúrate que esta base es la correcta #}
+{% load static %}
+
+{% block title %}Gestión de Asignaciones{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item active" aria-current="page">
+    <span style="font-size:14px;color:white;">Asignaciones</span>
+  </li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    {% if is_super_admin_or_akadi %} {# Variable de contexto pasada desde la vista #}
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="pills-assign-project-tab" data-bs-toggle="pill" data-bs-target="#pills-assign-project" type="button" role="tab" aria-controls="pills-assign-project" aria-selected="true">
+        Asignar Proyectos a MiniAdmin
+      </button>
+    </li>
+    {% endif %}
+    <li class="nav-item" role="presentation">
+      {# Si no es SuperAdmin, esta es la pestaña activa por defecto #}
+      <button class="nav-link {% if not is_super_admin_or_akadi %}active{% endif %}" id="pills-assign-factor-tab" data-bs-toggle="pill" data-bs-target="#pills-assign-factor" type="button" role="tab" aria-controls="pills-assign-factor" aria-selected="{% if not is_super_admin_or_akadi %}true{% else %}false{% endif %}">
+        Asignar Factores a Usuarios
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="pills-tabContent">
+    {% if is_super_admin_or_akadi %}
+    <div class="tab-pane fade show active" id="pills-assign-project" role="tabpanel" aria-labelledby="pills-assign-project-tab">
+      <h4 class="mb-3">Asignar Proyectos a Mini Administradores</h4>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="projectSelectForMiniAdmin" class="form-label">Seleccione un Proyecto:</label>
+          <select id="projectSelectForMiniAdmin" class="form-select">
+            <option value="">— Cargando proyectos... —</option>
+          </select>
+        </div>
+      </div>
+      <div id="miniAdminUsersContainer" class="mt-3 table-responsive">
+        <p class="text-muted">Seleccione un proyecto para ver los MiniAdmins y asignarles roles.</p>
+      </div>
+      <button class="btn btn-primary mt-3" id="saveProjectToMiniAdminBtn">
+        Guardar Asignaciones de Proyecto
+      </button>
+    </div>
+    {% endif %}
+
+    <div class="tab-pane fade {% if not is_super_admin_or_akadi %}show active{% endif %}" id="pills-assign-factor" role="tabpanel" aria-labelledby="pills-assign-factor-tab">
+      <h4 class="mb-3">Asignar Factores a Usuarios</h4>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="projectSelectForFactor" class="form-label">Seleccione un Proyecto:</label>
+          <select id="projectSelectForFactor" class="form-select">
+            <option value="">— Cargando proyectos... —</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label for="factorSelectForUser" class="form-label">Seleccione un Factor:</label>
+          <select id="factorSelectForUser" class="form-select" disabled>
+            <option value="">— Seleccione un proyecto primero —</option>
+          </select>
+        </div>
+      </div>
+      <div id="factorUsersContainer" class="mt-3 table-responsive">
+        <p class="text-muted">Seleccione un proyecto y un factor para ver los usuarios y asignarles roles.</p>
+      </div>
+      <button class="btn btn-primary mt-3" id="saveFactorToUserBtn">
+        Guardar Asignaciones de Factor
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'global/main.js' %}"></script>
+  <script defer src="{% static 'global/assignments.js' %}"></script>
+{% endblock %}

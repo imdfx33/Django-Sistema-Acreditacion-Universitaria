@@ -1,0 +1,412 @@
+.login-body {
+    background-color: var(--azul);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+}
+
+.login-container {
+    transform: scale(0.9);
+    transform-origin: center center;
+    background-color: var(--blanco);
+    border-radius: 50%;
+    width: 780px; 
+    height: 780px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    text-align: center;
+    overflow: hidden; 
+    box-sizing: border-box;
+    position: relative;
+}
+
+.login-logo {
+    width: 120px;
+    margin-bottom: 0rem;
+}
+
+.login-form {
+    width: 65%;
+    overflow-x: hidden;
+    overflow-y: auto;  
+    box-sizing: border-box;
+    transform-origin: top center;
+    -ms-overflow-style: none; 
+    scrollbar-width: none; 
+}
+
+
+/* 1) Duplicas las reglas base de .login-form */
+.login-form-spaced {
+    width: 65%;
+    overflow-x: hidden;
+    overflow-y: auto;  
+    box-sizing: border-box;
+    transform-origin: top center;
+    -ms-overflow-style: none; 
+    scrollbar-width: none;
+  
+    /* 2) en vez de padding, margin */
+    margin: 1rem;   /* ajusta el valor a tu gusto */
+  }
+  
+  /* opcional: ocultar scroll en webkit */
+  .login-form-spaced::-webkit-scrollbar {
+    display: none;
+  }
+  
+
+.login-form::-webkit-scrollbar {
+    display: none; 
+}
+
+.login-form button {
+    width: 90%;
+    margin: 0.5rem auto;
+    max-width: 550px;
+    box-sizing: border-box;
+}
+
+.input-container input,
+.form-group input {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.form-group {
+    margin-bottom: 0.75rem;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0rem;
+    font-weight: bold;
+    color: var(--gris);
+    text-align: left;
+    width: 50%;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.input-container {
+    position: relative;
+    width: 100%;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    opacity: 0.7;
+}
+
+.toggle-password:hover {
+    transform: translateY(-50%) scale(1.1);
+    opacity: 1;
+}
+
+.form-group input {
+    width: 100%;
+    text-align: left;
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--gris);
+    padding: 0.rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    outline: none;
+    font-size: 1rem;
+    background: #f9f9f9;
+}
+
+.form-group small {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 0.3rem;
+    display: block;
+}
+
+.form-group input::placeholder {
+    color: var(--gris);
+}
+
+.form-links {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0rem 1rem;
+}
+
+.form-links a {
+    color: var(--gris);
+    text-decoration: none;
+}
+
+.form-links a:hover {
+    text-decoration: underline;
+}
+
+.login-btn {
+    width: 100%;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.alert-error, .error-message {
+    color: #721c24;
+    background-color: #f8d7da;
+    padding: 0.4rem;
+    border-radius: 4px;
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    word-wrap: break-word;
+    max-width: 100%;
+    overflow-wrap: break-word;
+}
+
+.avatar-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: inline-block;
+    margin: 0 auto 1rem auto;
+    border: 2px solid #ddd;
+    margin-bottom: 1rem;
+}
+
+.profile-panel {
+    text-align: justify;
+    padding: 1rem;
+ }
+
+.profile-panel {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #f0f0f0;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+/* Botones estilizados */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+
+    height: 40px;
+
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background-color: #0056b3;
+    color: #fff;
+}
+  
+.btn-primary:hover {
+    background-color: #004494;
+}
+  
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+}
+  
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Separación de acciones */
+.profile-actions {
+    display: flex;
+    gap: 0.5rem;
+}  
+
+.profile-actions .btn {
+    flex: 1;               /* todos crecen igual */
+    max-width: 150px;      /* ancho máximo idéntico */
+    white-space: nowrap;   /* no se rompa el texto */
+    text-align: center; 
+    margin-right: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.profile-actions form {
+    flex: 1;         /* hace que el form crezca igual que los <a> */
+    max-width: 150px;
+}
+
+.profile-actions form .btn {
+    display: block;  /* para que el botón ocupe todo el ancho del form */
+    width: 100%;
+}
+
+/* Card general */
+.profile-card {
+    border-radius: 0.75rem;
+}
+  
+/* Avatar del header */
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 3px solid #dee2e6;
+}
+  
+/* List group flush override */
+.profile-card .list-group-item {
+    border: none;
+    padding-left: 0;
+    padding-right: 0;
+    font-size: 1rem;
+}
+  
+/* Botones flexibles */
+.profile-card .btn-group .btn {
+    min-width: 120px;
+}
+ 
+/* Ajustes de texto */
+  .profile-card h2 {
+    font-weight: 600;
+}
+.profile-card small {
+    font-size: 0.9rem;
+}
+  
+/* Modal */
+.modal-content {
+    border-radius: 0.5rem;
+}
+
+/* Dar más espacio en móvil y escritorio */
+.profile-panel, .card {
+    margin-bottom: 2rem;
+  }
+  
+  /* Asegurar que las cards no queden demasiado angostas */
+  @media (min-width: 768px) {
+    .card {
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }  
+
+/* Estiliza el botón “×” de las alert-dismissible */
+.alert-dismissible .close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    opacity: 0.6;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+  }
+  
+  .alert-dismissible .close span {
+    display: inline-block;
+    line-height: 1.5rem;
+    font-size: 1rem;
+    color: #000;
+  }
+
+
+.avatar-container {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 1rem;
+}
+.avatar-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 1) Contenedor de los primeros 4 botones */
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Asegura que cada botón ocupe ancho mínimo uniforme */
+.profile-actions .btn {
+  flex: 1 1 200px;    /* crece, encoge, base 200px */
+  max-width: 220px;   /* límite superior si quieres */
+}
+
+/* 2) Logout en su propia línea, centrado y full-width */
+.logout-action {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.logout-action form {
+  display: inline-block;
+  width: 100%;
+  max-width: 400px; 
+}
+
+.logout-action .btn {
+  width: 100%;
+}

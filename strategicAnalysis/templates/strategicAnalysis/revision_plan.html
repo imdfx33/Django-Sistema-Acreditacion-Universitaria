@@ -1,0 +1,76 @@
+{% extends 'home/etapa4.html' %}
+{% load static %}
+
+{% block title %}
+Revisión del Plan
+{% endblock %}
+
+{% block breadcrumbs %}
+{{ block.super }}
+<li class="breadcrumb-item"><a href="{% url 'revision_plan' %}"><span style="font-size: 14px;color: white;">Revisión del Plan</span></a></li>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'strategicAnalysis/css/improvement_plan_styles.css' %}">
+<div class="page-content container-fluid mt-3">
+    <div class="card shadow-sm">
+        <div class="card-body plan-mejoramiento-container p-0">
+
+            <div class="plan-content-area">
+                <div class="plan-column">
+                    <h5>Plan de mejoramiento:</h5>
+                    <textarea id="planMejoramientoTexto" class="plan-textarea" placeholder="Aquí puedes escribir tu plan...">{{ plan_data.plan_texto }}</textarea>
+                </div>
+                <div class="notes-column">
+                    <h5>Notas:</h5>
+                    <textarea id="notasMejoramientoTexto" class="notes-textarea" placeholder="Añadir notas respecto a los cambios del plan de mejoramiento.">{{ plan_data.notas_texto }}</textarea>
+                </div>
+            </div>
+
+            <div class="plan-actions">
+                <div id="statusMessage" class="status-message float-start"></div>
+                <button type="button" class="btn btn-outline-danger me-2" id="cancelarPlanBtnOriginal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="enviarPlanBtnOriginal" {% if not plan_data.plan_texto and not plan_data.notas_texto %}disabled{% endif %}>Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# --- MODALES (sin cambios) --- #}
+<!-- Modal de Confirmación para Cancelar -->
+<div class="modal fade" id="confirmCancelModal" tabindex="-1" aria-labelledby="confirmCancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" id="confirmCancelModalLabel">Confirmar Cancelación</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+            <div class="modal-body">¿Estás seguro de cancelar la creación/modificación del plan de mejoramiento? Los cambios no guardados se perderán.</div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button><button type="button" class="btn btn-danger" id="confirmCancelYesBtn">Sí, Cancelar</button></div>
+        </div>
+    </div>
+</div>
+<!-- Modal de Confirmación para Enviar/Guardar -->
+<div class="modal fade" id="confirmSaveModal" tabindex="-1" aria-labelledby="confirmSaveModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" id="confirmSaveModalLabel">Confirmar Guardado</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+            <div class="modal-body">¿Seguro de guardar los cambios en el plan de mejoramiento?</div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button><button type="button" class="btn btn-primary" id="confirmSaveYesBtn">Sí, Guardar</button></div>
+        </div>
+    </div>
+</div>
+{# --- FIN DE MODALES --- #}
+
+<input type="hidden" id="planMejoramientoId" value="{{ plan_data.plan_id }}">
+
+<script id="jsUrls" type="application/json">
+    {
+        "savePlanAjaxUrl": "{% url 'save_plan' %}",
+        "etapa4Url": "{% url 'etapa_4' %}"
+    }
+</script>
+<script src="{% static 'strategicAnalysis/js/improvement_plan_script.js' %}" defer></script>
+{% endblock %}
+
+
+
+
+

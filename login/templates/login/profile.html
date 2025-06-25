@@ -1,0 +1,120 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'login/css/login.css' %}">
+  <link rel="stylesheet" href="{% static 'login/css/auth-extra.css' %}">
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'login/js/auth-extra.js' %}"></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item">
+    <a href="{% url 'profile' %}">
+      <span style="font-size:14px; color:white;">Perfil</span>
+    </a>
+  </li>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+
+      <div class="card shadow-sm profile-card">
+        <!-- Header -->
+        <div class="card-header text-center bg-white border-0">
+          <h2 class="mb-0">Bienvenido, {{ user.first_name }}!</h2>
+        </div>
+
+        <!-- Mensajes flash -->
+        <div class="container py-2">
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <!-- Body -->
+        <div class="card-body text-center">
+          <div class="avatar-container">
+            <img src="{{ avatar_url }}" alt="Avatar">
+          </div>
+
+          <ul class="list-group list-group-flush text-left mb-4">
+            <li class="list-group-item"><strong>Cédula:</strong> {{ user.cedula }}</li>
+            <li class="list-group-item"><strong>Nombre:</strong> {{ user.first_name }} {{ user.last_name }}</li>
+            <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
+            <li class="list-group-item"><strong>Rol:</strong> {{ user.get_rol_display }}</li>
+          </ul>
+
+          <!-- Primera fila: los 4 botones principales -->
+          <div class="profile-actions">
+            <a href="{% url 'edit_profile' %}"   class="btn btn-primary">Editar Perfil</a>
+            <a href="{% url 'password_reset' %}" class="btn btn-primary">Cambiar Contraseña</a>
+            <a href="{% url 'upload_avatar' %}"  class="btn btn-secondary">Actualizar Foto</a>
+            <button id="deleteAvatarBtn"         class="btn btn-danger">Eliminar Foto</button>
+          </div>
+
+          <!-- Segunda fila: Logout ocupa todo el ancho -->
+          <div class="logout-action">
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-secondary">Cerrar Sesión</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal confirmación de borrado -->
+<div id="avatarModal" class="modal fade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">¿Eliminar foto?</h5>
+      </div>
+      <div class="modal-body">
+        <p>Esta acción eliminará tu foto de perfil de Google Drive. ¿Deseas continuar?</p>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary flex-fill" data-dismiss="modal">Cancelar</button>
+        <button id="confirmDeleteAvatar" type="button" class="btn btn-danger flex-fill">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts: jQuery y Bootstrap Bundle -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Mostrar modal al hacer clic
+  $('#deleteAvatarBtn').on('click', () => {
+    $('#avatarModal').modal('show');
+  });
+
+  // Confirmar y enviar formulario de borrado
+  $('#confirmDeleteAvatar').on('click', () => {
+    $('#deleteAvatarForm').submit();
+  });
+
+  // Auto-cerrar alerts tras 5 segundos
+  setTimeout(() => {
+    $('.alert').alert('close');
+  }, 5000);
+</script>
+{% endblock %}

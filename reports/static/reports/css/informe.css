@@ -1,0 +1,103 @@
+/* reports/static/reports/css/informe.css */
+
+#generate-report-section {
+    /* Contenedor para el botón y el spinner */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Espacio entre botón y spinner */
+}
+
+#btn-generate-final-report {
+    /* Estilos para el botón principal de generar informe */
+    padding: 0.75rem 1.5rem; /* Más padding para un botón más grande */
+    font-size: 1.1rem; /* Texto un poco más grande */
+}
+
+#btn-generate-final-report i {
+    font-size: 1.1em; /* Icono ligeramente más grande que el texto */
+}
+
+#final-report-spinner {
+    /* El spinner ya tiene clases de Bootstrap, esto es para asegurar visibilidad */
+    width: 1.5rem; /* Tamaño del spinner */
+    height: 1.5rem;
+    border-width: .2em; /* Grosor del borde del spinner */
+}
+
+/* Estilos para el contenedor del enlace al informe y mensajes */
+#final-report-link-container {
+    font-size: 1.1rem;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #e9f5e9; /* Un fondo verde claro para éxito */
+    border: 1px solid #c8e6c9;
+    color: #2e7d32; /* Texto verde oscuro */
+}
+
+#final-report-link-container a {
+    color: #1b5e20; /* Enlace más oscuro para contraste */
+    text-decoration: underline;
+}
+#final-report-link-container a:hover {
+    color: #003300;
+}
+
+#final-report-message .alert {
+    margin-top: 1rem;
+}
+
+/* reports/static/reports/css/informe.css */
+
+#generate-report-controls { /* Ya existe en tu HTML, ajustamos estilos para el contenedor de controles */
+    gap: 0.5rem; /* Espacio entre botón y el ensamblaje del spinner */
+}
+
+#btn-generate-final-report {
+    padding: 0.75rem 1.5rem; /* Padding existente */
+    font-size: 1.1rem; /* Tamaño de fuente existente */
+}
+
+#btn-generate-final-report i {
+    font-size: 1.1em; /* Tamaño de ícono existente */
+}
+
+#spinner-assembly { /* Contenedor del spinner y su texto */
+    display: flex; /* Para alinear spinner y texto internamente si es necesario */
+    align-items: center;
+}
+
+#final-report-spinner {
+    width: 2.5rem; /* Aumentamos el tamaño del spinner (antes 1.5rem) */
+    height: 2.5rem; /* Aumentamos el tamaño del spinner (antes 1.5rem) */
+    border-width: .3em; /* Hacemos el borde un poco más grueso (antes .2em) */
+    /* El color se define en HTML como text-primary */
+}
+
+#final-report-spinner-text {
+    font-size: 1rem; /* Tamaño de texto para "Generando..." */
+    color: #212529; /* Color de texto oscuro (similar a text-dark de Bootstrap) */
+    font-weight: 500; /* Un poco más de peso a la fuente */
+}
+
+/* Estilos para el contenedor del enlace al informe y mensajes (existentes) */
+#final-report-link-container {
+    font-size: 1.1rem; /* */
+    padding: 10px; /* */
+    border-radius: 5px; /* */
+    background-color: #e9f5e9; /* */
+    border: 1px solid #c8e6c9; /* */
+    color: #2e7d32; /* */
+}
+
+#final-report-link-container a {
+    color: #1b5e20; /* */
+    text-decoration: underline; /* */
+}
+#final-report-link-container a:hover {
+    color: #003300; /* */
+}
+
+#final-report-message .alert { /* Estilo existente para los mensajes de alerta */
+    margin-top: 0; /* Ajustado, ya que #final-report-message está ahora en su propia línea */
+}
+/* (Regla vacía para #final-report-message eliminada para evitar errores de compilación) */

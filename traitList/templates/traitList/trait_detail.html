@@ -1,0 +1,172 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load factor_permissions %} {# Or create trait_permissions if more specific logic is needed #}
+
+{% block title %}Detalle: {{ trait.name }}{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+  <style>
+    .aspect-card { margin-bottom: 0.75rem; border-left-width: 4px; }
+    .aspect-approved { border-left-color: var(--bs-success); }
+    .aspect-pending { border-left-color: var(--bs-warning); }
+  </style>
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'etapa_3' %}"><span style="font-size: 14px; color: white;">Evidencias y Proyectos</span></a></li>
+  <li class="breadcrumb-item"><a href="{% url 'project_list' %}"><span style="font-size: 14px;color: white;">Proyectos</span></a></li>
+
+  <li class="breadcrumb-item"><a href="{% url 'project_detail' project.pk %}"><span style="font-size: 14px;color: white;">{{ project.name }}</span></a></li>
+  
+  <li class="breadcrumb-item"><a href="{% url 'factor_list' %}"><span style="font-size: 14px;color: white;">Factores</span></a></li>
+  <li class="breadcrumb-item"><a href="{% url 'factor_detail' factor.pk %}"><span style="font-size: 14px;color: white;">{{ factor.name }}</span></a></li>
+  
+  <li class="breadcrumb-item active"><span style="font-size: 14px;color: white;">Características</span></li>
+  <li class="breadcrumb-item active" aria-current="page">
+    <span style="font-size: 14px;color: white;">{{ trait.name|truncatechars:30 }}</span>
+  </li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <div class="card shadow-sm trait-card-detail">
+    <div class="card-header bg-light">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="trait-title mb-0">{{ trait.name }}</h2>
+          <small class="text-muted">
+            Factor: <a href="{% url 'factor_detail' factor.pk %}">{{ factor.name }}</a> | 
+            Proyecto: <a href="{% url 'project_detail' project.pk %}">{{ project.name }}</a>
+          </small>
+        </div>
+        <div class="trait-actions-header">
+          {% if can_edit_trait %}
+            <a href="{% url 'trait_edit' trait.pk %}" class="btn btn-sm btn-outline-secondary" title="Editar Característica {{ trait.name }}" aria-label="Editar Característica {{ trait.name }}">
+                <i class="fas fa-edit"></i>
+            </a>
+          {% endif %}
+          {% if can_delete_trait %}
+            <a href="{% url 'trait_delete' trait.pk %}" class="btn btn-sm btn-outline-danger ms-2" title="Eliminar Característica {{ trait.name }}" aria-label="Eliminar Característica {{ trait.name }}">
+                <i class="fas fa-trash-alt"></i>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <p><strong>Descripción:</strong> {{ trait.description|default:"No especificada."|linebreaksbr }}</p>
+      {% if user_trait_role %}
+        <p><strong>Tu rol en esta característica (heredado del factor):</strong> 
+            <span class="badge bg-info text-dark">{{ user_trait_role|capfirst }}</span>
+        </p>
+      {% endif %}
+
+      <h4 class="mt-4">Progreso de la Característica</h4>
+      <div class="progress mb-3" style="height: 20px;">
+        <div class="progress-bar {% if trait.approved_percentage == 100 %}bg-success{% elif trait.approved_percentage > 50 %}bg-info{% else %}bg-warning{% endif %}" 
+             role="progressbar" style="width: {{ trait.approved_percentage }}%;" 
+             aria-valuenow="{{ trait.approved_percentage }}" aria-valuemin="0" aria-valuemax="100">
+          {{ trait.approved_percentage }}%
+        </div>
+      </div>
+      <p class="text-muted small">{{ total_aspects_count }} Aspecto(s) en total. {{ approved_aspects_count }} Aprobado(s).</p>
+
+      <hr class="my-4">
+
+      <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+        <h4>Aspectos de esta Característica</h4>
+        {% if can_add_aspect %}
+          <a href="{% url 'aspectManager:aspect_create' %}?trait={{ trait.id_trait }}" class="btn btn-primary btn-sm" title="Añadir Nuevo Aspecto" aria-label="Añadir Nuevo Aspecto a la Característica {{ trait.name }}">
+              <i class="fas fa-plus"></i>
+          </a>
+        {% endif %}
+      </div>
+
+      {% if aspects %}
+        <div class="list-group">
+          {% for aspect in aspects %}
+            <div class="list-group-item aspect-card {% if aspect.approved %}aspect-approved{% else %}aspect-pending{% endif %}">
+              <div class="d-flex w-100 justify-content-between align-items-center">
+                <h6 class="mb-1">{{ aspect.name }} {% if aspect.weight %}({{ aspect.weight }}%){% endif %}</h6>
+                <small>
+                  {% if aspect.approved %}
+                    <span class="badge bg-success"><i class="fas fa-check-circle"></i> Aprobado</span>
+                  {% else %}
+                    <span class="badge bg-warning text-dark"><i class="fas fa-clock"></i> Pendiente</span>
+                  {% endif %}
+                </small>
+              </div>
+              <p class="mb-1 small text-muted">{{ aspect.description|truncatewords:25|default:"Sin descripción." }}</p>
+              <div class="text-end">
+                 <a href="{% url 'aspectList:aspect_detail' aspect.pk %}" class="btn btn-outline-primary btn-sm py-0 px-1" title="Ver Detalle Aspecto"> {# Namespace aspectList #}
+                    <i class="fas fa-eye"></i>
+                </a>
+                {% if can_add_aspect %} {# Reutilizamos permiso de "añadir" para "editar" aspecto por simplicidad #}
+                <a href="{% url 'aspectManager:aspect_edit' aspect.pk %}" class="btn btn-outline-secondary btn-sm py-0 px-1 ms-1" title="Editar Aspecto">
+                    <i class="fas fa-edit"></i>
+                </a>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-light mt-3" role="alert">
+          Esta característica aún no tiene aspectos definidos.
+          {% if can_add_aspect %}
+            <a href="{% url 'aspectManager:aspect_create' %}?trait={{ trait.id_trait }}" class="alert-link">Puedes añadir uno ahora.</a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <h4 class="mt-4">Archivos Adjuntos a la Característica</h4>
+      {% if can_attach_to_trait %}
+      <div class="text-center mt-3">
+        <a href="{% url 'attach_generic_trait' trait.pk %}" class="btn btn-info btn-sm" title="Adjuntar Nuevo Archivo" aria-label="Adjuntar Nuevo Archivo a la Característica {{ trait.name }}">
+            <i class="fas fa-paperclip"></i> Adjuntar Nuevo Archivo a la Característica
+        </a>
+      </div>
+      {% endif %}
+{% if attachments %}
+            <ul class="list-group list-group-flush">
+              {% for file in attachments %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <i class="fas fa-file-alt me-2 text-secondary"></i>
+                    {% if file.drive_link %}
+                      {# Priorizar el enlace de Drive si existe #}
+                      <a href="{{ file.drive_link }}" target="_blank" rel="noopener noreferrer" title="Ver en Google Drive: {{ file.name }}.{{ file.type }}">
+                        {{ file.name }}.{{ file.type }}
+                        <i class="fab fa-google-drive ms-1 text-muted"></i>
+                      </a>
+                    {% elif file.archivo %}
+                      {# Fallback al archivo local si no hay enlace de Drive pero sí archivo local #}
+                      <a href="{{ file.archivo.url }}" target="_blank" rel="noopener noreferrer" title="Ver archivo local: {{ file.name }}.{{ file.type }}">
+                        {{ file.name }}.{{ file.type }}
+                      </a>
+                    {% else %}
+                      {# Si no hay ni enlace de Drive ni archivo local #}
+                      <span>{{ file.name }}.{{ file.type }} (Enlace no disponible)</span>
+                    {% endif %}
+                  </div>
+                  <small class="text-muted">{{ file.modification_date|date:"d M, Y" }}</small>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted">No hay archivos adjuntos para esta característica.</p>
+          {% endif %}
+
+      <div class="mt-4 text-center">
+        <a href="{% url 'factor_detail' factor.pk %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver al Factor: {{ factor.name }}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

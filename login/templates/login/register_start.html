@@ -1,0 +1,85 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Registro – Paso 1</title>
+  <link rel="stylesheet" href="{% static 'login/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'login/css/login.css' %}">
+  <link rel="stylesheet" href="{% static 'login/css/auth-extra.css' %}">
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <img src="{% static 'login/imgs/icesi_logo.png' %}" alt="Logo ICESI" class="login-logo">
+    <h2>Crear cuenta</h2>
+
+    <form method="post" class="login-form">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="alert alert-error">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      {% for field in form %}
+        <div class="form-group">
+          {{ field.label_tag }}
+          {% if field.name == "password1" %}
+            <div class="input-container">
+              {{ field }}
+              <img src="{% static 'login/imgs/eye-closed.png' %}" 
+                   alt="Mostrar contraseña" 
+                   class="toggle-password" 
+                   id="togglePassword"
+                   onclick="togglePasswordVisibility()">
+            </div>
+          {% else %}
+            {{ field }}
+          {% endif %}
+          {% for error in field.errors %}
+            <small class="error-message">{{ error }}</small>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="btn btn-primary login-btn">Enviar código a Gmail</button>
+      <p class="form-links">
+        <a href="{% url 'login' %}">¿Ya tienes cuenta?</a>
+      </p>
+    </form>
+  </div>
+
+  <script>
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById("id_password1");
+      const toggleIcon = document.getElementById("togglePassword");
+
+      const isHidden = passwordInput.type === "password";
+      passwordInput.type = isHidden ? "text" : "password";
+
+      toggleIcon.src = isHidden 
+        ? "{% static 'login/imgs/eye-open.png' %}" 
+        : "{% static 'login/imgs/eye-closed.png' %}";
+      toggleIcon.alt = isHidden ? "Ocultar contraseña" : "Mostrar contraseña";
+    }
+  </script>
+  <script src="{% static 'core/js/login-adapt.js' %}" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const fn = document.getElementById('id_first_name');
+      const ln = document.getElementById('id_last_name');
+      const em = document.getElementById('id_email');
+  
+      if (fn) fn.addEventListener('input', () => {
+        fn.value = fn.value.toUpperCase();
+      });
+      if (ln) ln.addEventListener('input', () => {
+        ln.value = ln.value.toUpperCase();
+      });
+      if (em) em.addEventListener('input', () => {
+        em.value = em.value.toLowerCase();
+      });
+    });
+  </script>
+  <script src="{% static 'login/js/auth-extra.js' %}"></script>
+</body>
+</html>

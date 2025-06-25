@@ -1,0 +1,135 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}{{ form_title|default:"Gestionar Aspecto" }}{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'etapa_3' %}"><span style="font-size: 14px; color: white;">Evidencias y Proyectos</span></a></li>
+  <li class="breadcrumb-item"><a href="{% url 'project_list' %}"><span style="font-size: 14px;color: white;">Proyectos</span></a></li>
+
+  {% if trait_ctx %}
+    <li class="breadcrumb-item"><a href="{% url 'project_detail' trait_ctx.factor.project.pk %}"><span style="font-size: 14px;color: white;">{{ trait_ctx.factor.project.name }}</span></a></li>
+    <li class="breadcrumb-item"><a href="{% url 'factor_detail' trait_ctx.factor.pk %}"><span style="font-size: 14px;color: white;">{{ trait_ctx.factor.name }}</span></a></li>
+    <li class="breadcrumb-item"><a href="{% url 'trait_detail' trait_ctx.pk %}"><span style="font-size: 14px;color: white;">{{ trait_ctx.name }}</span></a></li>
+    {# CORREGIDO: Usar el espacio de nombres 'aspectList' #}
+    <li class="breadcrumb-item"><a href="{% url 'aspectList:aspect_list' %}?trait_id={{ trait_ctx.pk }}"><span style="font-size: 14px;color: white;">Aspectos</span></a></li>
+  {% elif object.trait %} {# Para el UpdateView #}
+    <li class="breadcrumb-item"><a href="{% url 'project_detail' object.trait.factor.project.pk %}"><span style="font-size: 14px;color: white;">{{ object.trait.factor.project.name }}</span></a></li>
+    <li class="breadcrumb-item"><a href="{% url 'factor_detail' object.trait.factor.pk %}"><span style="font-size: 14px;color: white;">{{ object.trait.factor.name }}</span></a></li>
+    <li class="breadcrumb-item"><a href="{% url 'trait_detail' object.trait.pk %}"><span style="font-size: 14px;color: white;">{{ object.trait.name }}</span></a></li>
+    {# CORREGIDO: Usar el espacio de nombres 'aspectList' #}
+    <li class="breadcrumb-item"><a href="{% url 'aspectList:aspect_list' %}?trait_id={{ object.trait.pk }}"><span style="font-size: 14px;color: white;">Aspectos</span></a></li>
+  {% else %}
+    {# CORREGIDO: Usar el espacio de nombres 'aspectList' #}
+    <li class="breadcrumb-item"><a href="{% url 'aspectList:aspect_list' %}"><span style="font-size: 14px;color: white;">Aspectos</span></a></li>
+  {% endif %}
+  
+  {% if object and object.pk %}
+    {# CORREGIDO: Usar el espacio de nombres 'aspectList' #}
+    <li class="breadcrumb-item"><a href="{% url 'aspectList:aspect_detail' object.pk %}"><span style="font-size: 14px;color: white;">{{ object.name|truncatechars:30 }}</span></a></li>
+  {% endif %}
+  
+  <li class="breadcrumb-item active" aria-current="page">
+    <span style="font-size: 14px;color: white;">{{ form_title|default:"Gestionar"|truncatechars:30 }}</span>
+  </li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h2 class="mb-0">{{ form_title|default:"Gestionar Aspecto" }}</h2>
+          {% if trait_ctx %}
+            <p class="text-muted mb-0">Para la Característica: {{ trait_ctx.name }} (Factor: {{ trait_ctx.factor.name }})</p>
+          {% elif object.trait %}
+             <p class="text-muted mb-0">Característica: {{ object.trait.name }} (Factor: {{ object.trait.factor.name }})</p>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <form method="post" novalidate>
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}<p class="mb-0">{{ error }}</p>{% endfor %}
+              </div>
+            {% endif %}
+
+            {% if form.trait.is_hidden %}
+              {{ form.trait }} {# Renderiza el campo oculto si el trait viene por URL #}
+            {% elif form.trait %}
+              <div class="mb-3">
+                <label for="{{ form.trait.id_for_label }}" class="form-label">{{ form.trait.label }}</label>
+                {{ form.trait }}
+                {% if form.trait.errors %}
+                  <div class="invalid-feedback d-block">{% for error in form.trait.errors %}{{ error }}{% endfor %}</div>
+                {% elif not form.fields.trait.queryset.exists %}
+                  <small class="form-text text-warning">No hay características disponibles o no tienes permiso para crear aspectos en ninguna.</small>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            <div class="mb-3">
+              <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
+              {{ form.name }}
+              {% if form.name.errors %}<div class="invalid-feedback d-block">{% for error in form.name.errors %}{{ error }}{% endfor %}</div>{% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+              {{ form.description }}
+              {% if form.description.errors %}<div class="invalid-feedback d-block">{% for error in form.description.errors %}{{ error }}{% endfor %}</div>{% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.weight.id_for_label }}" class="form-label">{{ form.weight.label }}</label>
+              {{ form.weight }}
+              {% if form.weight.errors %}<div class="invalid-feedback d-block">{% for error in form.weight.errors %}{{ error }}{% endfor %}</div>{% endif %}
+            </div>
+            
+            <div class="mb-3">
+              <label for="{{ form.acceptance_criteria.id_for_label }}" class="form-label">{{ form.acceptance_criteria.label }}</label>
+              {{ form.acceptance_criteria }}
+              {% if form.acceptance_criteria.errors %}<div class="invalid-feedback d-block">{% for error in form.acceptance_criteria.errors %}{{ error }}{% endfor %}</div>{% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.evaluation_rule.id_for_label }}" class="form-label">{{ form.evaluation_rule.label }}</label>
+              {{ form.evaluation_rule }}
+              {% if form.evaluation_rule.errors %}<div class="invalid-feedback d-block">{% for error in form.evaluation_rule.errors %}{{ error }}{% endfor %}</div>{% endif %}
+            </div>
+            
+            {% if object %} {# Solo mostrar el campo 'approved' en el formulario de edición #}
+            <div class="form-check mb-3">
+              {{ form.approved }}
+              <label class="form-check-label" for="{{ form.approved.id_for_label }}">
+                {{ form.approved.label }}
+              </label>
+              {% if form.approved.errors %}<div class="invalid-feedback d-block">{% for error in form.approved.errors %}{{ error }}{% endfor %}</div>{% endif %}
+            </div>
+            {% endif %}
+            
+            <hr>
+            <div class="d-flex justify-content-end">
+              {# CORREGIDO: Usar el espacio de nombres 'aspectList' para el botón Cancelar #}
+              <a href="{% if object %}{% url 'aspectList:aspect_detail' object.pk %}{% elif trait_ctx %}{% url 'trait_detail' trait_ctx.pk %}{% else %}{% url 'aspectList:aspect_list' %}{% endif %}" class="btn btn-outline-secondary me-2" title="Cancelar" aria-label="Cancelar">
+                  <i class="fas fa-times"></i>
+              </a>
+                <button type="submit" class="btn btn-primary" {% if form.trait and not form.fields.trait.queryset.exists and not trait_ctx %}disabled{% endif %} title="Guardar Aspecto" aria-label="Guardar Aspecto">
+                    <i class="fas fa-save"></i>
+                </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

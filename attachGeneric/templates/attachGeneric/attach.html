@@ -1,0 +1,152 @@
+{# templates/attachGeneric/attach.html #}
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %} {# O extra_head si es lo que usa tu base.html #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" integrity="..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12 bg-light border rounded p-3 mb-3">
+                <div class="mb-0">
+                    <label for="agendaEntrega" class="form-label">Agenda tu entrega:</label>
+                    <input type="text" class="form-control" id="agendaEntrega" style="display: none;">
+                </div>
+            </div>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" action="{% url 'guardar_archivos_adjuntos' %}" id="formSubidaArchivos">
+            {% csrf_token %}
+            <input type="hidden" name="id_evento" id="id_evento" value="{{ evento.pk | default:'' }}">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="directorPrograma" class="form-label">Seleccione que director de programa informar</label>
+                        <select class="form-select" id="directorPrograma" name="directorPrograma">
+                            <option selected>Seleccionar...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <label class="form-label m-0">Archivos</label>
+                        <div>
+                            <button type="button" class="btn btn-light border rounded me-2" style="padding: 0.25rem 0.5rem;" id="selectZipFolder">
+                                <i class="fas fa-folder-open fa-lg"></i>
+                            </button>
+                            <button type="button" class="btn btn-light border rounded" style="padding: 0.25rem 0.5rem;" id="selectPdfFiles">
+                                <i class="fas fa-upload fa-lg"></i>
+                            </button>
+                            <input type="file" id="fileInput" multiple name="archivos" style="display: none;" accept="">
+                        </div>
+                    </div>
+                    <div id="dropArea" class="bg-light border rounded p-3 d-flex flex-column align-items-center justify-content-center" style="min-height: 150px; cursor: pointer;">
+                        <p id="dropMessage" class="text-muted" style="opacity: 0.6;">Arrastra y suelta 4 PDFs o 1 ZIP aquí</p>
+                        <div id="fileList" class="mt-2">
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <small class="text-muted">Tamaño máximo de archivo: 10 MB, número máximo de archivos: 4 pdf o 1 zip</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-12 text-end">
+                    {# Tu botón de descarte original. Considera darle un ID si su JS lo necesita #}
+                    <button type="button" class="btn btn-outline-danger me-2">Descartar</button> 
+                    <button type="button" class="btn btn-primary" id="confirmSaveBtn">Confirmar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal fade" id="errorMessageModal" tabindex="-1" aria-labelledby="errorMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title text-white" id="errorMessageModalLabel">Error</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="errorMessageText">Solo se permiten hasta 4 archivos PDF o 1 archivo ZIP.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="discardConfirmationModal" tabindex="-1" aria-labelledby="discardConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title text-white" id="discardConfirmationModalLabel">Confirmar Descarte</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de descartar los archivos?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" id="confirmDiscardBtn">Sí</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmConfirmationModal" tabindex="-1" aria-labelledby="confirmConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title text-white" id="confirmConfirmationModalLabel">Confirmar Guardado</h5>
+                    <button type="button" class="btn btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de guardar los archivos?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" id="confirmSaveBtnModal">Sí</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="successMessageModal" tabindex="-1" aria-labelledby="successMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success">
+                    <h5 class="modal-title text-white" id="successMessageModalLabel">Éxito</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="successMessageText">Archivos cargados exitosamente.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% block body_scripts %}
+        <script>
+            // Redirige INMEDIATAMENTE al detalle de la Trait cuando la subida sea EXITOSA.
+            document.addEventListener('DOMContentLoaded', function() {
+                const successModal = document.getElementById('successMessageModal');
+
+                if (successModal) {
+                    successModal.addEventListener('shown.bs.modal', function() {
+                        {% if trait and trait.pk %}
+                            // Si 'trait' y 'trait.pk' están definidos, redirige a 'trait_detail'
+                            window.location.href = "{% url 'trait_detail' trait.pk %}";
+                        {% else %}
+                            // De lo contrario (ej. viniendo de submit_request), redirige a 'submit_request'
+                            window.location.href = "{% url 'submit_request' %}";
+                        {% endif %}
+                    });
+                }
+            });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js" integrity="..." crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="{% static 'attachGeneric/js/attach.js' %}"></script>
+    {% endblock %}
+{% endblock %}

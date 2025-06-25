@@ -1,0 +1,126 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load factor_permissions %} {# O crear aspect_permissions si es necesario #}
+
+{% block title %}Lista de Aspectos{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'etapa_3' %}"><span style="font-size: 14px;color: white;">Evidencias y Proyectos</span></a></li>
+  <li class="breadcrumb-item active" aria-current="page">
+    <span style="font-size: 14px;color: white;">Aspectos</span>
+  </li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Listado de Aspectos</h2>
+    <div>
+      {% if can_create_aspect_anywhere %}
+        {# CORREGIDO: Usar el espacio de nombres 'aspectManager' #}
+        <a href="{% url 'aspectManager:aspect_create' %}" class="btn btn-primary" title="Crear Nuevo Aspecto" aria-label="Crear Nuevo Aspecto">
+            <i class="fas fa-plus"></i>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <form method="get" class="filters-form mb-4 p-3 bg-light rounded shadow-sm">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label for="q_aspect_list" class="form-label">Buscar por nombre:</label>
+        <input type="text" name="q" id="q_aspect_list" class="form-control form-control-sm" value="{{ current_search_query|default:'' }}" placeholder="Nombre aspecto">
+      </div>
+      <div class="col-md-2">
+        <label for="project_id_aspect_list" class="form-label">Proyecto:</label>
+        <select name="project_id" id="project_id_aspect_list" class="form-select form-select-sm">
+          <option value="">Todos</option>
+          {% for proj in available_projects %}<option value="{{ proj.id_project }}" {% if current_project_filter == proj.id_project|stringformat:"s" %}selected{% endif %}>{{ proj.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label for="factor_id_aspect_list" class="form-label">Factor:</label>
+        <select name="factor_id" id="factor_id_aspect_list" class="form-select form-select-sm">
+          <option value="">Todos</option>
+          {% for fact in available_factors %}<option value="{{ fact.id_factor }}" {% if current_factor_filter == fact.id_factor|stringformat:"s" %}selected{% endif %}>{{ fact.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label for="trait_id_aspect_list" class="form-label">Característica:</label>
+        <select name="trait_id" id="trait_id_aspect_list" class="form-select form-select-sm">
+          <option value="">Todas</option>
+          {% for trait_item in available_traits %}<option value="{{ trait_item.id_trait }}" {% if current_trait_filter == trait_item.id_trait|stringformat:"s" %}selected{% endif %}>{{ trait_item.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label for="approved_aspect_list" class="form-label">Estado Aprobación:</label>
+        <select name="approved" id="approved_aspect_list" class="form-select form-select-sm">
+          {% for val, text in approved_choices %}<option value="{{ val }}" {% if current_approved_filter == val %}selected{% endif %}>{{ text }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-md-1 text-end">
+        <button type="submit" class="btn btn-secondary btn-sm w-100">Filtrar</button>
+      </div>
+       <div class="col-md-12 text-end mt-2">
+         <a href="{% url 'aspectList:aspect_list' %}" class="btn btn-outline-secondary btn-sm ms-2">Limpiar Filtros</a>
+      </div>
+    </div>
+  </form>
+
+  {% if aspects %}
+    <div class="table-responsive">
+      <table class="table table-hover table-striped">
+        <thead class="table-light">
+          <tr>
+            <th>Aspecto</th>
+            <th>Peso (%)</th>
+            <th>Característica</th>
+            <th>Factor</th>
+            <th>Proyecto</th>
+            <th>Aprobado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for aspect in aspects %}
+          <tr>
+            <td>
+                <a href="{% url 'aspectList:aspect_detail' aspect.pk %}"><strong>{{ aspect.name }}</strong></a>
+            </td>
+            <td>{{ aspect.weight|default_if_none:"N/A" }}</td>
+            <td>
+                <a href="{% url 'trait_detail' aspect.trait.pk %}">{{ aspect.trait.name }}</a>
+            </td>
+            <td>
+                <a href="{% url 'factor_detail' aspect.trait.factor.pk %}">{{ aspect.trait.factor.name }}</a>
+            </td>
+            <td>
+                <a href="{% url 'project_detail' aspect.trait.factor.project.pk %}">{{ aspect.trait.factor.project.name }}</a>
+            </td>
+            <td>
+              {% if aspect.approved %}
+                <span class="badge bg-success"><i class="fas fa-check-circle"></i> Sí</span>
+              {% else %}
+                <span class="badge bg-warning text-dark"><i class="fas fa-clock"></i> No</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-info mt-3">
+      No hay aspectos para mostrar que coincidan con los filtros actuales.
+      {% if can_create_aspect_anywhere %}
+        {# CORREGIDO: Usar el espacio de nombres 'aspectManager' #}
+        <a href="{% url 'aspectManager:aspect_create' %}" class="alert-link">¿Deseas crear uno nuevo?</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

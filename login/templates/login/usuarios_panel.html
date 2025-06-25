@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html><html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Usuarios</title>
+  <link rel="stylesheet" href="{% static 'login/css/base.css' %}">
+</head><body>
+<div class="panel">
+  <h2>Gestión de usuarios</h2>
+  <table>
+    <tr><th>Cédula</th><th>Nombre</th><th>Rol</th><th>Activo</th><th>Acción</th></tr>
+    {% for u in usuarios %}
+      <tr>
+        <td>{{ u.cedula }}</td>
+        <td>{{ u.first_name }} {{ u.last_name }}</td>
+        <td>{{ u.get_rol_display }}</td>
+        <td>{{ u.is_active }}</td>
+        <td>
+          {% if u != request.user %}
+          <form method="post">{% csrf_token %}
+            <input type="hidden" name="pk" value="{{ u.pk }}">
+            <button class="btn btn-primary" type="submit">
+              {% if u.is_active %}Desactivar{% else %}Activar{% endif %}
+            </button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+</body></html>

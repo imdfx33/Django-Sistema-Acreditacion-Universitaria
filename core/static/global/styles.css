@@ -1,0 +1,643 @@
+/* styles.css */
+
+/*────────────────────────────────────────────────────────────────────────*/
+/* 1) Variables Globales                                                  */
+/*────────────────────────────────────────────────────────────────────────*/
+:root {
+    /* Colores principales */
+    --color-primary:    #0d6efd;
+    --color-primary-h:  #084298;
+    --color-primary-rgb: 13,110,253;
+    --color-secondary:   #6c757d;
+    --color-secondary-h: #565e64;
+    --color-secondary-rgb:108,117,125;
+    --color-success:     #198754;
+    --color-success-h:   #146c43;
+    --color-success-rgb: 25,135,84;
+    --color-danger:      #dc3545;
+    --color-danger-h:    #a71d2a;
+    --color-danger-rgb:  220,53,69;
+
+    /* Fondos y bordes */
+    --color-bg-bar:      #e9ecef;
+    --color-table-head:  #f2f2f2;
+    --color-zebra:       #fafafa;
+    --color-row-hover:   #f1f7ff;
+    --color-row-hover-rgb:241,247,255;
+    --color-border:      #e5e5e5;
+    --color-card-border: #e1e1e1;
+
+    /* Fondo y texto */
+    /* --color-bg:          #ffffff;  REMOVEREMOS ESTE FONDO BLANCO PREDETERMINADO DEL BODY */
+    --color-text:        #333333;
+    --color-text-alt:    #555555;
+    --color-text-muted:  #777777;
+    --color-text-on-dark-bg: #f8f9fa; /* Para texto sobre fondos oscuros/imagen */
+
+
+    /* Layout */
+    --container-max:     1600px; /* Ligeramente reducido para "achicar un tris" */
+    --radius:            0.5rem;
+    --shadow:            0 6px 20px rgba(0,0,0,0.05);
+    --tr:                0.3s;
+}
+/*────────────────────────────────────────────────────────────────────────*/
+/* 2) Reset & Base Typography                                             */
+/*────────────────────────────────────────────────────────────────────────*/
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px; /* Ligeramente reducido para "achicar un tris" */
+    scroll-behavior: smooth;
+}
+
+body {
+    line-height: 1.6; /* Ajustado para nueva fuente base */
+    color: var(--color-text);
+    /* background: var(--color-bg); ELIMINADO - Se manejará con el pseudo-elemento */
+    position: relative; /* Necesario para el pseudo-elemento de fondo */
+    margin:0; /* Asegurar que no haya márgenes por defecto */
+}
+
+/* Pseudo-elemento para el fondo de imagen desenfocado */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: var(--main-bg-image); /* Usamos la variable inyectada desde base.html */
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed; /* El fondo permanece fijo durante el scroll */
+    filter: blur(8px) brightness(0.65); /* Desenfoque y ligero oscurecimiento para contraste */
+    z-index: -1; /* Detrás de todo el contenido */
+    transform: scale(1.05); /* Evita bordes duros por el blur */
+}
+
+
+h1, h2, h3, h4, h5, h6,
+p, ul, ol {
+    margin-bottom: 0.9rem; /* Ligeramente reducido */
+}
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--tr);
+}
+a:hover, a:focus {
+    color: var(--color-primary-h);
+}
+
+/* Layout para empujar el footer hacia abajo */
+.site-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ocupa al menos toda la altura de la ventana */
+    background-color: rgba(255, 255, 255, 0.1); /* Un overlay muy sutil sobre la imagen de fondo, ayuda a la legibilidad */
+}
+
+.page-content {
+    flex-grow: 1; /* Hace que esta sección ocupe el espacio disponible */
+    padding-top: 1rem; /* Espacio sobre el contenido */
+    padding-bottom: 1rem; /* Espacio debajo del contenido */
+}
+
+.site-footer { /* O puedes usar directamente 'footer' si no hay otros footers */
+    flex-shrink: 0; /* Evita que el footer se encoja */
+    /* background: var(--bs-gray-300); Ya está inline, pero si quieres controlarlo aquí */
+    background-color: rgba(var(--color-bg-bar-rgb, 233, 236, 239), 0.85) !important; /* Fondo semi-transparente para el footer */
+    color: var(--color-text-alt) !important; /* Asegurar color de texto legible */
+    border-top: 1px solid rgba(var(--color-border-rgb, 229, 229, 229), 0.5);
+}
+.site-footer p{
+    color: var(--color-text-muted) !important;
+    margin-bottom: 0;
+}
+
+/*────────────────────────────────────────────────────────────────────────*/
+/* 3) Contenedores Principales                                            */
+/*────────────────────────────────────────────────────────────────────────*/
+.container {
+    width: 90%;
+    max-width: var(--container-max);
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1rem 0.75rem; /* Ajustado padding horizontal */
+}
+.panel,
+.card {
+    width: 75%;
+    /* background: rgba(255,255,255,0.93); MODIFICADO PARA MEJOR CONTRASTE */
+    background: rgba(255,255,255,0.90); /* Un poco menos transparente para mejorar legibilidad */
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: background-color var(--tr), box-shadow var(--tr), transform var(--tr);
+    margin: 1.5rem auto; /* Margen reducido */
+    padding: 1.25rem; /* Padding reducido */
+    max-width:  var(--container-max);
+}
+.panel:hover,
+.card:hover {
+    box-shadow: 0 10px 28px rgba(0,0,0,0.12); /* Sombra un poco más pronunciada */
+    transform: translateY(-5px); /* Elevación un poco mayor */
+}
+
+/* Para forms */
+.form-panel { /* Hereda de .panel o .card por las reglas de arriba si tiene ambas clases */
+    max-width: 750px; /* Reducido */
+    width: 85%; /* Ligeramente más ancho para pantallas pequeñas */
+    padding: 1.5rem; /* Ajustado */
+}
+.form-panel h2 {
+    margin-bottom: 1.25rem;
+    color: var(--color-text-alt);
+}
+
+/* (El resto de tu CSS sigue aquí, por ejemplo, Grid Layout, Tarjetas, Botones, etc.) */
+/* ... (asegúrate de que las siguientes secciones de tu CSS usan fondos y colores que contrasten bien) ... */
+
+/* Modificar tarjetas específicas para que el texto sea legible */
+.project-card,
+.factor-card {
+    background: rgba(255,255,255,0.92); /* Ligeramente más opaco si es necesario */
+}
+.project-title,
+.factor-name {
+    color: var(--color-text); /* Texto principal más oscuro */
+}
+.project-dates {
+    color: var(--color-text-muted);
+}
+
+
+/* Ajuste para el home.html, la columna de botones */
+/* Si usas la clase `home-sidebar` en la columna de botones de `home.html` */
+.home-sidebar {
+    background-color: rgba(248, 249, 250, 0.85) !important; /* Fondo de la barra lateral en home, un poco más opaco */
+    /* backdrop-filter: blur(3px); Opcional: desenfocar lo que está detrás de esta barra lateral */
+}
+.home-sidebar .btn { /* Para asegurar contraste en los botones de la sidebar del home */
+    color: #fff; /* Asumiendo que los botones son oscuros */
+}
+.home-sidebar .btn-primary:hover {
+    color: #fff;
+}
+/* Asegurar que el texto en el home sea legible */
+.home-content-area h1, .home-content-area p { /* Asume que envuelves el texto principal en un div con esta clase */
+    color: var(--color-text-on-dark-bg); /* Texto claro */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Sombra para legibilidad */
+}
+
+
+/*────────────────────────────────────────────────────────────────────────*/
+/* 4) Grid Layout para Listados                                          */
+/*────────────────────────────────────────────────────────────────────────*/
+/* Proyectos */
+.projects-grid,
+.factors-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+gap: 1.5rem;
+margin-top: 2rem;
+}
+/* Factor-detail usa .factors-grid :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1} */
+
+/*────────────────────────────────────────────────────────────────────────*/
+/* 5) Tarjetas (Cards)                                                   */
+/*────────────────────────────────────────────────────────────────────────*/
+.project-card,
+.factor-card {
+gap: 1rem;
+padding: 1rem;
+background: rgba(255,255,255,0.9);
+border: 1px solid var(--color-card-border);
+border-radius: var(--radius);
+overflow: hidden;
+display: flex;
+flex-direction: column;
+transition: box-shadow var(--tr), transform var(--tr);
+}
+.project-card:hover,
+.factor-card:hover {
+box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+transform: translateY(-4px);
+}
+/* Encabezados */
+.project-header {
+padding: 1rem;
+border-bottom: 1px solid var(--color-border);
+}
+.project-title,
+.factor-name {
+font-size: 1.25rem;
+color: var(--color-text-alt);
+}
+.project-dates {
+font-size: 0.9rem;
+color: var(--color-text-muted);
+}
+/* Acciones dentro de la tarjeta */
+.project-actions,
+.buttons {
+display: flex;
+flex-wrap: wrap;
+gap: 0.5rem;
+margin-top: 1rem;
+justify-content: flex-end;
+}
+
+/*────────────────────────────────────────────────────────────────────────*/
+/* 6) Botones (.btn-*)                                                    */
+/*────────────────────────────────────────────────────────────────────────*/
+.btn {
+display: inline-block;
+padding: 0.75rem 1rem;
+font-weight: 500;
+font-size: 1rem;
+color: #fff;
+border: none;
+border-radius: 0.3rem;
+cursor: pointer;
+transition: background-color var(--tr), box-shadow var(--tr), transform var(--tr);
+}
+.btn-icon-only {
+    padding: 0.5rem 0.75rem; /* Ajusta estos valores */
+    line-height: 1; /* Ayuda a centrar el icono verticalmente */
+}
+.btn:focus {
+outline: none;
+box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), .5);
+}
+/* Variantes básicas */
+.btn-primary {
+background: rgba(var(--color-primary-rgb), .85);
+box-shadow: 0 2px 6px rgba(var(--color-primary-rgb), .3);
+}
+.btn-primary:hover {
+background: var(--color-primary-h);
+box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), .4);
+transform: translateY(-2px);
+}
+.btn-secondary {
+background: rgba(var(--color-secondary-rgb), .85);
+box-shadow: 0 2px 6px rgba(var(--color-secondary-rgb), .3);
+}
+.btn-secondary:hover {
+background: var(--color-secondary-h);
+box-shadow: 0 4px 12px rgba(var(--color-secondary-rgb), .4);
+transform: translateY(-2px);
+}
+.btn-success {
+background: rgba(var(--color-success-rgb), .85);
+box-shadow: 0 2px 6px rgba(var(--color-success-rgb), .3);
+}
+.btn-success:hover {
+background: var(--color-success-h);
+box-shadow: 0 4px 12px rgba(var(--color-success-rgb), .4);
+transform: translateY(-2px);
+}
+.btn-danger {
+background: rgba(var(--color-danger-rgb), .85);
+box-shadow: 0 2px 6px rgba(var(--color-danger-rgb), .3);
+}
+.btn-danger:hover {
+background: var(--color-danger-h);
+box-shadow: 0 4px 12px rgba(var(--color-danger-rgb), .4);
+transform: translateY(-2px);
+}
+/* Clases semánticas extra */
+/* .btn-view, .btn-add, and .btn-new will be styled below using direct CSS, not @extend */
+
+/*────────────────────────────────────────────────────────────────────────*/
+/* 7) Tablas                                                             */
+/*────────────────────────────────────────────────────────────────────────*/
+.table,
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 1rem 0;
+background: var(--color-bg);
+}
+.table th, .table td,
+table th, table td {
+padding: 0.75rem;
+vertical-align: middle;
+}
+.table thead th,
+table thead th {
+background: var(--color-table-head);
+color: var(--color-text);
+font-weight: 600;
+border-bottom: 2px solid var(--color-border);
+}
+.table tbody tr:nth-child(odd),
+table tbody tr:nth-child(odd) {
+background: var(--color-zebra);
+}
+.table tbody tr:hover,
+table tbody tr:hover {
+background: rgba(var(--color-row-hover-rgb), .7);
+}
+/* Responsividad */
+.table-responsive {
+overflow-x: auto;
+-webkit-overflow-scrolling: touch;
+margin: 1rem 0;
+}
+
+/*────────────────────────────────────────────────────────────────────────*/
+/* 8) Formas & Filtros                                                    */
+/*────────────────────────────────────────────────────────────────────────*/
+.form-group {
+margin-bottom: 1rem;
+}
+.form-group label {
+display: block;
+margin-bottom: 0.5rem;
+font-weight: 500;
+}
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+width: 100%;
+padding: 0.75rem;
+border: 1px solid var(--color-border);
+border-radius: 0.3rem;
+font-size: 1rem;
+color: var(--color-text);
+background: var(--color-bg);
+transition: border-color var(--tr), box-shadow var(--tr);
+}
+input:focus,
+select:focus,
+textarea:focus {
+outline: none;
+border-color: var(--color-primary);
+box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), .25);
+}
+.filters-form {
+display: flex;
+flex-wrap: wrap;
+gap: 1rem;
+align-items: center;
+margin: 1rem 0;
+}
+
+/*────────────────────────────────────────────────────────────────────────*/
+/* 9) Barras de progreso                                                  */
+/*────────────────────────────────────────────────────────────────────────*/
+.progress {
+background: var(--color-bg-bar);
+border-radius: 0.3rem;
+overflow: hidden;
+height: 1.25rem;
+}
+.progress-bar {
+height: 100%;
+background: var(--color-primary);
+display: flex;
+align-items: center;
+justify-content: center;
+color: #fff;
+font-size: 0.9rem;
+font-weight: 500;
+transition: width var(--tr);
+}
+
+/*────────────────────────────────────────────────────────────────────────*/
+/*10) Alerts & Breadcrumbs                                               */
+/*────────────────────────────────────────────────────────────────────────*/
+.alert {
+position: relative;
+padding: 1rem;
+margin: 1rem 0;
+border-radius: 0.3rem;
+transition: opacity var(--tr), height var(--tr), margin var(--tr), padding var(--tr);
+}
+.alert.fade {
+opacity: 0;
+height: 0;
+margin: 0;
+padding: 0;
+overflow: hidden;
+}
+.breadcrumb {
+list-style: none;
+display: flex;
+flex-wrap: wrap;
+gap: 0.5rem;
+background: transparent;
+padding: 0.5rem 1rem;
+border-radius: 0.3rem;
+}
+.breadcrumb-item + .breadcrumb-item::before {
+content: '/';
+padding: 0 0.5rem;
+color: var(--color-text-muted);
+}
+.breadcrumb a {
+color: #fff;
+}
+
+/*────────────────────────────────────────────────────────────────────────*/
+/*11) Responsive                                                          */
+/*────────────────────────────────────────────────────────────────────────*/
+@media (max-width: 768px) {
+.projects-grid, .factors-grid {
+    grid-template-columns: 1fr;
+}
+.btn {
+    width: 100%;
+    text-align: center;
+}
+.table thead {
+    display: none;
+}
+table, tbody, tr, td {
+    display: block;
+    width: 100%;
+}
+tr {
+    margin-bottom: 1rem;
+}
+td {
+    position: relative;
+    padding: 0.75rem 1rem;
+}
+td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+}
+}
+
+/*────────────────────────────────────────────────────────────────────────*/
+/*OTROS                                             */
+/*────────────────────────────────────────────────────────────────────────*/
+/* ————————————————————————————————————————————————————————————— */
+/*  Botones “por defecto” y clases semánticas extra               */
+/* ————————————————————————————————————————————————————————————— */
+/* 1) Cualquier .btn que NO sea .btn-primary|secondary|success|danger */
+.btn:not(.btn-primary):not(.btn-secondary):not(.btn-success):not(.btn-danger) {
+background: rgba(var(--color-primary-rgb), .85);
+color: #fff;
+box-shadow: 0 2px 6px rgba(var(--color-primary-rgb), .3);
+}
+.btn:not(.btn-primary):not(.btn-secondary):not(.btn-success):not(.btn-danger):hover {
+background: var(--color-primary-h);
+}
+
+/* 2) + Añadir Factor */
+.btn-add {
+background: rgba(var(--color-success-rgb), .85);
+color: #fff;
+}
+.btn-add:hover {
+background: var(--color-success-h);
+}
+
+/* 3) Ver detalle (o .btn-view) */
+.btn-view {
+background: rgba(var(--color-primary-rgb), .85);
+color: #fff;
+}
+.btn-view:hover {
+background: var(--color-primary-h);
+}
+
+/*────────────────────────────────────────────────────────────────────────*/
+/*   Estilos específicos para formularios (“Crear/Editar”)               */
+/*────────────────────────────────────────────────────────────────────────*/
+.form-panel {
+/* Usa el mismo estilo de panel que tus cards */
+background: rgba(255,255,255,0.95);
+border: 1px solid var(--color-card-border);
+border-radius: var(--radius);
+box-shadow: var(--shadow);
+padding: 2rem;
+margin: 2rem auto;
+max-width: 800px;
+}
+
+.form-panel h1,
+.form-panel h2 {
+margin-bottom: 1.5rem;
+color: var(--color-text);
+}
+
+.form-panel form {
+display: flex;
+flex-direction: column;
+gap: 1.5rem;
+}
+
+/* Cada grupo (label + input/textarea/select) */
+.form-group {
+display: flex;
+flex-direction: column;
+}
+.form-group label {
+margin-bottom: 0.5rem;
+font-weight: 500;
+color: var(--color-text);
+}
+
+/* Controles de formulario */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+width: 100%;
+padding: 0.75rem;
+border: 1px solid var(--color-border);
+border-radius: 0.3rem;
+font-size: 1rem;
+color: var(--color-text);
+background: var(--color-bg);
+transition: border-color var(--tr), box-shadow var(--tr);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+outline: none;
+border-color: var(--color-primary);
+box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), .25);
+}
+
+/* Botonera final */
+.form-actions {
+display: flex;
+justify-content: flex-end;
+gap: 1rem;
+margin-top: 2rem;
+}
+
+/* Clases semánticas para botones de formulario */
+.btn-cancel {
+background: rgba(var(--color-secondary-rgb), .85);
+color: #fff;
+}
+.btn-cancel:hover {
+background: var(--color-secondary-h);
+}
+
+.btn-save {
+background: rgba(var(--color-primary-rgb), .85);
+color: #fff;
+}
+.btn-save:hover {
+background: var(--color-primary-h);
+}
+
+/*────────────────────────────────────────────────────────────────────────*/
+/*12) Estilos para Imágenes (los que añadimos antes)                      */
+/*────────────────────────────────────────────────────────────────────────*/
+/* ... (tus estilos de imagen existentes) ... */
+img {
+    max-width: 100%;
+    height: auto;   
+    display: block; 
+    /* border-radius: var(--radius); NO POR DEFECTO, aplicar con .img-enhanced o similar */
+}
+
+.img-enhanced {
+    border-radius: var(--radius);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+    transition: transform var(--tr) ease-in-out, 
+                box-shadow var(--tr) ease-in-out,
+                filter var(--tr) ease-in-out;
+    overflow: hidden; 
+}
+/* ... el resto de los estilos de imagen ... */
+
+.home-main-image-container {
+    border-radius: var(--radius);
+    overflow: hidden; 
+    box-shadow: none; /* La imagen principal del home no necesita su propia sombra si es el fondo */
+    height: 100%; 
+}
+
+.home-main-image-container img {
+    transition: transform var(--tr) ease-out, filter var(--tr) ease-out;
+    border-radius: 0; 
+}
+
+.home-main-image-container:hover img {
+    transform: scale(1.0); /* No escalar si se usa como fondo general, o un scale muy sutil */
+    filter: none; /* No aplicar filtros si es el fondo general */
+}

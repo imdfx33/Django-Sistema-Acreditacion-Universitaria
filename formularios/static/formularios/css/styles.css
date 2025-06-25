@@ -1,0 +1,284 @@
+/* Paleta de colores */
+:root {
+    --main-blue: #2B77E0;
+    --main-gray: #777777;
+    --main-white: #FFFFFF;
+    --morado: #865CF0;
+    --naranja: #FF6835;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--main-white);
+    color: var(--main-gray);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: var(--main-blue);
+    color: var(--main-white);
+}
+
+.btn-secondary {
+    background-color: var(--main-gray);
+    color: var(--main-white);
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.back-btn img.back-icon {
+    vertical-align: middle;
+}
+
+.alert {
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.chat-icon {
+    width: 50px;
+    height: 50px;
+}
+
+.logo {
+    height: 50px;
+    max-width: 100%;
+    width: auto;
+    object-fit: contain;
+}
+
+.factor-icon {
+    width: 50px;
+    height: 50px;
+}
+
+.usuario-icon {
+    width: 50px;
+    height: 50px;
+}
+
+.back-icon{
+    width: 10px;
+    height: 25px;
+}
+
+.table-container {
+    max-height: 319px;
+    overflow-y: auto;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    background-color: #f2f2f2;
+    z-index: 10;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px 15px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    font-weight: bold;
+    background-color: #f2f2f2;
+}
+
+td a {
+    text-decoration: none;
+    color: #2B77E0;
+    overflow: hidden;
+    white-space: nowrap;
+    display: block;
+}
+
+.pendiente {
+    background-color: red;
+    color: white;
+}
+
+.finalizado {
+    background-color: green;
+    color: white;
+}
+
+.en-curso {
+    background-color: yellow;
+    color: black;
+}
+
+/* Estilos para los botones */
+td button {
+    background-color: #e0e0e0;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+td button:hover {
+    background-color: #d0d0d0;
+}
+
+/* Estilos para el texto "783.PDF" */
+td span.pdf-link {
+    color: #2B77E0;
+    cursor: pointer;
+}
+
+td span.pdf-link:hover {
+    text-decoration: underline;
+}
+
+thead th:nth-child(1),
+tbody td:nth-child(1) {
+    width: 20%;
+}
+
+thead th:nth-child(2),
+tbody td:nth-child(2) {
+    width: 15%;
+}
+
+thead th:nth-child(3),
+tbody td:nth-child(3) {
+    width: 35%;
+}
+
+thead th:nth-child(4),
+tbody td:nth-child(4) {
+    width: 15%;
+}
+
+thead th:nth-child(5),
+tbody td:nth-child(5) {
+    width: 15%;
+}
+
+.estado-celda {
+    position: relative;
+    text-align: center;
+    overflow: visible;
+    padding: 8px 0;
+}
+
+.estado-celda span {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-sizing: border-box;
+    width: calc(100% - 10px); /* Ajustamos el ancho */
+    margin: 0 auto; /* Centramos el span */
+}
+
+.estado-opciones {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background-color: white;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    width: 150px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 500;
+}
+
+.estado-opciones button {
+    width: 100%;
+    text-align: center;
+    padding: 8px 12px;
+    margin: 5px 0;
+    border: none;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.estado-opciones button:hover {
+    background-color: #e0e0e0;
+}
+
+.estado-opciones.show {
+    display: flex;
+}
+
+.fecha_formulario, .id_formulario {
+    display: inline-block;
+}
+
+.info-formulario {
+    background-color: #88898C;
+    color: black;
+    padding: 8px 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ddd;
+}
+
+#boton-agregar-formulario {
+    background-color: var(--main-blue);
+    color: var(--main-white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    bottom: 80px;
+    left: 50%; /* Centra respecto al ancho total */
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+#boton-agregar-formulario:hover {
+    background-color: #2163b8;
+}

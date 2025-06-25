@@ -1,0 +1,61 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'calendar_create_event/css/styles.css' %}">
+{% endblock %}
+{% block title %}Editar Reunion{% endblock %}
+
+
+
+{% block content %}
+<div class="form-card">
+    <h2 class="form-title">Editar reunión</h2>
+    <form method="POST" id="event-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">Título</label>
+            {{ form.title }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Descripción</label>
+            {{ form.description }}
+        </div>
+
+        <h3>Reunión</h3>
+        <div class="session-fields">
+            <div class="form-group">
+                <label for="{{ form.date.id_for_label }}">Fecha</label>
+                {{ form.date }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.time.id_for_label }}">Hora Inicio</label>
+                {{ form.time }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.meeting_type.id_for_label }}">Tipo Reunión</label>
+                {{ form.meeting_type }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.location.id_for_label }}">Ubicación</label>
+                {{ form.location }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.link.id_for_label }}">Link de la reunión</label>
+                {{ form.link }}
+            </div>
+        </div>
+
+        <h3>Participantes</h3>
+        <div id="participants-list" class="participants-container">
+            {{ form.participants }}
+        </div>
+
+        <div class="buttons">
+            <button type="button" class="btn btn-danger" onclick="window.history.back()">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

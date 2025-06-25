@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Añadir Característica a {{ factor.name }}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'global/main.js' %}"></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+{{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'etapa_3' %}"><span style="font-size: 14px; color: white;">Evidencias y Proyectos</span></a></li>
+  <li class="breadcrumb-item"><a href="{% url 'project_list' %}"><span style="font-size: 14px;color: white;">Proyectos</span></a></li>
+
+    {% if object %}
+        <li class="breadcrumb-item"><a href="{% url 'trait_edit' object.pk %}"><span style="font-size: 14px;color: white;">Editar {{trait.name}}</span></a></li>
+    {% else %}
+        <li class="breadcrumb-item"><a href="{% url 'trait_create' %}"><span style="font-size: 14px;color: white;">Crear Característica</span></a></li>
+    {% endif %}
+{% endblock %}
+
+
+{% block content %}
+<div class="panel">
+    <h2>Añadir Característica a «{{ factor.name }}»</h2>
+    {% if available_traits %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="trait_id">Selecciona una característica existente:</label>
+                <select name="trait_id" id="trait_id" class="form-control">
+                    {% for trait in available_traits %}
+                        <option value="{{ trait.id_trait }}">{{ trait.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="buttons">
+                <a href="{% url 'factor_detail' factor.pk %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Añadir</button>
+            </div>
+        </form>
+    {% else %}
+        <p>No hay características disponibles para añadir.</p>
+        <a href="{% url 'trait_create_for_factor' factor.pk %}" class="btn btn-primary">
+            Crear nueva Característica
+        </a>
+    {% endif %}
+</div>
+{% endblock %}

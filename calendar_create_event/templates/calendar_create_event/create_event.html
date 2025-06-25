@@ -1,0 +1,102 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'calendar_create_event/css/styles.css' %}">
+{% endblock %}
+{% block title %}Crear Reuniones{% endblock %}
+
+{% block breadcrumbs %}
+{{block.super}}
+<li class="breadcrumb-item"> <a href="{% url 'calendar' %}"> <span style="font-size:14px; color:white;"> Calendario </span> </a> </li>
+<li class="breadcrumb-item"> <a href="{% url 'create_event' %}"> <span style="font-size:14px; color:white;"> Crear Reunión </span> </a> </li>
+{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h2 class="form-title">Agendar nueva reunión</h2>
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}  <!-- Mostrar solo mensajes de éxito -->
+                <div class="alert alert-success">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <form method="POST" id="event-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">Título</label>
+            {{ form.title }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Descripción</label>
+            {{ form.description }}
+        </div>
+
+        <h3>Reunión</h3>
+        <div class="session-fields">
+            <div class="form-group">
+                <label for="{{ form.date.id_for_label }}">Fecha</label>
+                {{ form.date }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.time.id_for_label }}">Hora Inicio</label>
+                {{ form.time }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.meeting_type.id_for_label }}">Tipo Reunión</label>
+                {{ form.meeting_type }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.location.id_for_label }}">Ubicación</label>
+                {{ form.location }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.link.id_for_label }}">Link de la reunión</label>
+                {{ form.link }}
+            </div>
+        </div>
+
+        <h3>Participantes</h3>
+        <div id="participants-list" class="participants-container">
+            {{ form.participants }}
+        </div>
+
+        <div class="buttons">
+            <button type="button" href="{% url 'calendar' %}" class="btn btn-danger" onclick="window.history.back()">Descartar</button>
+            <button type="submit" href="{% url 'calendar' %}" class="btn btn-primary">Confirmar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const meetingType = document.getElementById('id_meeting_type');
+    const locationField = document.getElementById('id_location');
+    const linkField = document.getElementById('id_link');
+    const locationGroup = locationField.closest('.form-group');
+    const linkGroup = linkField.closest('.form-group');
+
+    function toggleFields() {
+        const isPresencial = meetingType.value === 'Presencial';
+        
+        // Deshabilitar campos y grupos
+        locationField.disabled = !isPresencial;
+        linkField.disabled = isPresencial;
+        
+        // Estilos visuales
+        locationGroup.style.opacity = isPresencial ? 1 : 0.6;
+        linkGroup.style.opacity = isPresencial ? 0.6 : 1;
+        
+        // Limpiar campos
+        if (isPresencial) linkField.value = '';
+        else locationField.value = '';
+    }
+
+    toggleFields(); // Ejecutar al cargar
+    meetingType.addEventListener('change', toggleFields);
+});
+</script>
+{% endblock %}

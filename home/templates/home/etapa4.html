@@ -1,0 +1,48 @@
+{% extends 'home/home.html' %}
+{% load static %}
+{% block title %}Etapa 4{% endblock %}
+
+{% block breadcrumbs %}
+{{ block.super }}
+<li class="breadcrumb-item"><a href="{% url 'etapa_4' %}"><span style="font-size: 14px;color: white;">Analisis Estrategico</span></a></li>
+{% endblock %}
+
+{% block content %}
+<div class="mt-5 d-flex justify-content-center" style="min-height: 60vh;">
+  <div class="card shadow-sm p-4 colored-card" style="max-width: 900px; width: 95%; max-height: 85vh; display: flex; flex-direction: column;">
+    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+      <div>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+          <div class="col">
+            <button class="btn btn-primary btn-lg w-100 rounded-3 py-md-4 py-3" style="font-size: 1.1rem;" onclick="window.location.href='{% url 'submit_request' %}'">
+              Enviar una solicitud
+            </button>
+          </div>
+          <div class="col">
+            <button class="btn btn-primary btn-lg w-100 rounded-3 py-md-4 py-3" style="font-size: 1.1rem;" onclick="window.location.href='{% url 'plan_mejoramiento' %}'">
+              Crear plan de mejoramiento
+            </button>
+          </div>
+          <div class="col">
+            <button class="btn btn-primary btn-lg w-100 rounded-3 py-md-4 py-3" style="font-size: 1.1rem;" onclick="window.location.href='{% url 'revision_plan' %}'">
+              Revisión del plan de mejoramiento
+            </button>
+          </div>
+          <div class="col">
+            <button class="btn btn-primary btn-lg w-100 rounded-3 py-md-4 py-3" style="font-size: 1.1rem;" onclick="window.location.href='{% url 'matrixDOFA' %}'">
+              Matrix DOFA
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .colored-card {
+    background-color: #e0e0e0; /* Gris claro sólido como en la imagen */
+    border-radius: 15px; /* Esquinas redondeadas para la tarjeta */
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'home/etapa4.html' %}
+{% load static %}
+
+{% block breadcrumbs %}
+{{ block.super }}
+<li class="breadcrumb-item"><a href="{% url 'submit_request' %}"><span style="font-size: 14px;color: white;">Enviar Solicitud</span></a></li>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'strategicAnalysis/css/custom_styles.css' %}">
+<div class="page-content container mt-4 d-flex justify-content-center align-items-center" style="flex-grow: 1;">
+    <div class="card shadow-sm p-4" style="max-width: 1000px; width: 100%; display: flex; flex-direction: column;">
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% if attached_files_info and attached_files_info.files %}
+            {% for file_detail in attached_files_info.files %}
+            <input type="hidden" name="adjunto_nombre_{{ forloop.counter }}" value="{{ file_detail.name }}">
+            <input type="hidden" name="adjunto_link_{{ forloop.counter }}" value="{{ file_detail.drive_link }}">
+            <input type="hidden" name="adjunto_tipo_{{ forloop.counter }}" value="{{ file_detail.type }}">
+            {% endfor %}
+            <input type="hidden" name="id_evento_adjuntado" value="{{ attached_files_info.id_evento_origen }}">
+            <input type="hidden" name="director_programa_adjuntado" value="{{ attached_files_info.director_programa_seleccionado }}">
+            {% endif %}
+
+            <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+                <div class="mb-3">
+                    <label for="subject" class="form-label">Asunto de la solicitud:</label>
+                    <input type="text" class="form-control" id="subject" name="asunto_solicitud">
+                </div>
+
+                <div class="mb-3" style="flex-grow: 1;">
+                    <label for="message" class="form-label">Mensaje de la solicitud:</label>
+                    <textarea class="form-control" id="message" name="mensaje_solicitud" rows="4"></textarea>
+
+                    <div id="attachedFilesPillsContainer" class="file-pill-container">
+                        {% if attached_files_info and attached_files_info.files %}
+                        {% for file_info in attached_files_info.files %}
+                        <div class="file-pill" title="{{ file_info.name }} ({{ file_info.size|filesizeformat }})">
+                                    <span class="file-icon">
+                                        {% if file_info.type == 'pdf' %}
+                                            <i class="fas fa-file-pdf text-danger"></i>
+                                        {% elif file_info.type == 'zip' %}
+                                            <i class="fas fa-file-archive text-primary"></i>
+                                        {% else %}
+                                            <i class="fas fa-file"></i> {# Icono por defecto #}
+                                        {% endif %}
+                                    </span>
+                            <span class="file-name">{{ file_info.name }}</span>
+                            <span class="file-size">({{ file_info.size|filesizeformat }})</span>
+                            {% if file_info.drive_link %}
+                            <a href="{{ file_info.drive_link }}" target="_blank" class="file-link" title="Ver en Drive">
+                                <i class="fas fa-external-link-alt fa-xs"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="form-text text-muted mt-1">Máximo de caracteres: 2000</div>
+                </div>
+
+                <div class="row align-items-end mt-3"> {# Añadido mt-3 para separar un poco #}
+                    <div class="col-md-8 d-flex align-items-center">
+                        <button type="button" class="btn btn-light border rounded d-flex align-items-center justify-content-center" style="background-color: #e0f7fa; color: #000" onclick="window.location.href='{% url 'attach_generic' %}'">
+                            {% if attached_files_info and attached_files_info.files %}
+                            Modificar/Añadir Archivos ({{ attached_files_info.count }})
+                            {% else %}
+                            Adjuntar Archivos
+                            {% endif %}
+                        </button>
+                    </div>
+                    <div class="col-md-4 d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-danger">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Enviar Solicitud</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

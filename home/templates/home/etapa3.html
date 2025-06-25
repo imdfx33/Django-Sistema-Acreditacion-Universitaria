@@ -1,0 +1,82 @@
+{% extends "home/home.html" %}
+{% load static %}
+
+{% block title %}Etapa 3{% endblock %}
+
+{% block breadcrumbs %}
+{{ block.super }}
+    <li class="breadcrumb-item"><a href="{% url 'etapa_3' %}"><span style="font-size: 14px; color: white;">Evidencias y Proyectos</span></a></li>
+{% endblock %}
+
+{% block content %}
+<main class="container-fluid p-0 m-0" style="height: calc(90vh - 55px - 50px);">
+  <!-- Start: 1 Row 2 Columns -->
+  <div class="row g-0 h-100">
+    <div class="row g-0 h-100">
+
+      <!-- Columna Izquierda -->
+      <div class="col-12 col-md-3
+                  d-flex flex-column
+                  p-3
+                  justify-content-center
+                  align-items-stretch
+                  home-sidebar">
+        <div class="d-flex flex-column h-100 w-100 gap-3">
+          <button class="btn btn-secondary btn-lg flex-fill w-100"
+                  type="button"
+                  style="background: var(--bs-gray-600); font-size: 20px;"
+                  onclick="window.location.href='{% url 'project_list' %}'">
+            Gestionar Proyectos
+          </button>
+          <button class="btn btn-secondary btn-lg flex-fill w-100"
+                  type="button"
+                  style="background: var(--bs-gray-600); font-size: 20px;"
+                  onclick="window.location.href='{% url 'factor_list' %}'">
+            Gestionar Factores
+          </button>
+          <button class="btn btn-secondary btn-lg flex-fill w-100"
+                  type="button"
+                  style="background: var(--bs-gray-600); font-size: 20px;"
+                  onclick="window.location.href='{% url 'trait_list' %}'">
+            Gestionar Características
+          </button>
+          <button class="btn btn-secondary btn-lg flex-fill w-100"
+                  type="button"
+                  style="background: var(--bs-gray-600); font-size: 20px;"
+                  onclick="window.location.href='{% url 'aspectList:aspect_list' %}'">
+            Gestionar Aspectos
+          </button>
+          <button class="btn btn-secondary btn-lg flex-fill w-100"
+                  type="button"
+                  style="background: var(--bs-gray-600); font-size: 20px;"
+                  onclick="window.location.href='{% url 'assignments_page' %}'">
+            Asignación de Factores
+          </button>
+        </div>
+      </div>
+      <!-- /Columna Izquierda -->
+
+      <!-- Columna Imagen (flexible) -->
+      <div class="col
+                  p-0
+                  h-100
+                  home-main-image-container
+                  d-none d-md-flex
+                  align-items-center
+                  justify-content-center">
+        <img src="{% static 'home/img/etapa3_foto.png' %}"
+             class="w-100 h-100 object-fit-cover"
+             style="object-fit: cover;"
+             alt="Campus Icesi">
+      </div>
+      <!-- /Columna Imagen -->
+
+      <!-- Columna de 3px a la derecha -->
+      <div class="d-none d-md-block" style="width: 15px; height: 100%;"></div>
+      <!-- /Columna 3px -->
+
+    </div>
+  </div>
+  <!-- End: 1 Row 2 Columns -->
+</main>
+{% endblock %}

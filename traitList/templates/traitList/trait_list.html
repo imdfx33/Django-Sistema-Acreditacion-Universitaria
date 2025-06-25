@@ -1,0 +1,122 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load factor_permissions %} {# Asumiendo que este tag también podría ser útil aquí, o crear trait_permissions #}
+
+{% block title %}Lista de Características{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'etapa_3' %}"><span style="font-size: 14px;color: white;">Evidencias y Proyectos</span></a></li>
+  <li class="breadcrumb-item active" aria-current="page"><span style="font-size: 14px;color: white;">Características</span></li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Listado de Características</h2>
+    <div>
+      {% if can_create_trait_anywhere %}
+        <a href="{% url 'trait_create' %}" class="btn btn-primary" title="Crear Nueva Característica" aria-label="Crear Nueva Característica">
+            <i class="fas fa-plus"></i>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <form method="get" class="filters-form mb-4 p-3 bg-light rounded shadow-sm">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label for="q_trait_list" class="form-label">Buscar por nombre:</label>
+        <input type="text" name="q" id="q_trait_list" class="form-control form-control-sm" value="{{ current_search_query|default:'' }}" placeholder="Nombre característica">
+      </div>
+      <div class="col-md-3">
+        <label for="project_id_trait_list" class="form-label">Proyecto:</label>
+        <select name="project_id" id="project_id_trait_list" class="form-select form-select-sm">
+          <option value="">Todos los Proyectos</option>
+          {% for proj in available_projects %}
+            <option value="{{ proj.id_project }}" {% if current_project_filter == proj.id_project|stringformat:"s" %}selected{% endif %}>
+              {{ proj.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="factor_id_trait_list" class="form-label">Factor:</label>
+        <select name="factor_id" id="factor_id_trait_list" class="form-select form-select-sm">
+          <option value="">Todos los Factores</option>
+          {% for fact in available_factors %}
+            <option value="{{ fact.id_factor }}" {% if current_factor_filter == fact.id_factor|stringformat:"s" %}selected{% endif %}>
+              {{ fact.name }} ({{fact.project.name|truncatechars:15 }})
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="status_trait_list" class="form-label">Estado del Factor:</label>
+        <select name="status" id="status_trait_list" class="form-select form-select-sm">
+          <option value="">Cualquier Estado</option>
+          {% for value, display_name in status_choices %}
+            <option value="{{ value }}" {% if current_status_filter == value %}selected{% endif %}>{{ display_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-12 text-end mt-2">
+        <button type="submit" class="btn btn-secondary btn-sm">Aplicar Filtros</button>
+         <a href="{% url 'trait_list' %}" class="btn btn-outline-secondary btn-sm ms-2">Limpiar Filtros</a>
+      </div>
+    </div>
+  </form>
+
+  {% if traits %}
+    <div class="table-responsive">
+      <table class="table table-hover table-striped">
+        <thead class="table-light">
+          <tr>
+            <th>Característica</th>
+            <th>Factor Asociado</th>
+            <th>Proyecto</th>
+            <th>Progreso Aspectos</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for trait in traits %}
+          <tr>
+            <td>
+                <a href="{% url 'trait_detail' trait.pk %}"><strong>{{ trait.name }}</strong></a><br>
+                <small class="text-muted">{{ trait.description|truncatewords:10 }}</small>
+            </td>
+            <td>
+                <a href="{% url 'factor_detail' trait.factor.pk %}">{{ trait.factor.name }}</a>
+            </td>
+            <td>
+                <a href="{% url 'project_detail' trait.factor.project.pk %}">{{ trait.factor.project.name }}</a>
+            </td>
+            <td>
+              <div class="progress" style="height: 12px;" title="{{ trait.approved_percentage }}% de aspectos aprobados">
+                <div class="progress-bar {% if trait.approved_percentage == 100 %}bg-success{% elif trait.approved_percentage > 50 %}bg-info{% else %}bg-warning{% endif %}" 
+                     role="progressbar" style="width: {{ trait.approved_percentage }}%;" 
+                     aria-valuenow="{{ trait.approved_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                </div>
+              </div>
+              <small class="text-muted">{{ trait.approved_percentage }}%</small>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  {% else %}
+    <div class="alert alert-info mt-3">
+      No hay características para mostrar que coincidan con los filtros actuales.
+      {% if can_create_trait_anywhere %}
+        <a href="{% url 'trait_create' %}" class="alert-link">¿Deseas crear una nueva?</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

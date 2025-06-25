@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="es">
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <!-- CSS base (global para toda la app) -->
+    <title>{% block title%}Mi App{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'global/styles.css' %}"> 
+    <link rel="stylesheet" href="{% static 'core/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/Navbar-Right-Links-icons.css' %}">
+
+    <!-- Bloque para CSS específicos de cada template -->
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <div class="page-wrapper d-flex flex-column min-vh-100">
+        <header>
+            <!-- Start: Barra_Navegacion -->
+            <nav class="navbar navbar-expand-md py-3" style="background: #2B77E0;">
+                <div class="container-fluid">
+                    <div>
+                    <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-2">
+                        <span class="visually-hidden">Toggle navigation</span>
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <!-- Start: Izquierda_Barra -->
+                    <a class="navbar-brand d-flex float-start align-items-center pb-0 pt-0 me-0" style="margin-left: initial;width: 900px;">
+                        <button class="btn btn-primary ps-0 ms-0 me-0 mt-0 pb-0 mb-0" type="button" onclick="window.history.back()" 
+                            style="background: transparent;border-style: none;width: 50px;height: 50px;padding: 0px;margin-left: 100px;">
+                            <img src="{% static 'core/img/Back.png' %}">
+                        </button>
+                        <img src="{% static 'core/img/Logo.png' %}" style="height: 50px;padding: 0px 0px;" class="mt-0 mb-0 ms-0 me-0">
+                    </a>
+                    <!-- End: Izquierda_Barra -->
+                        
+
+                    <!-- Start: Derecha -->
+                    <div class="d-flex float-end align-items-center">
+                        <div>
+                            <!-- Start: Derecha_Barra -->
+                            <ul class="navbar-nav ms-auto d-flex flex-row align-items-center">
+
+                                <!-- Start: Gestión de Cuentas -->
+                                {% if request.user.rol == 'superadmin' or request.user.rol == 'miniadmin' %}
+                                <li class="nav-item mx-1">
+                                <button class="btn p-0 border-0 bg-transparent">
+                                    <img
+                                    src="{% static 'core/img/gestion_cuentas.png' %}"
+                                    style="width: 50px; height: 50px;"
+                                    onclick="window.location.href='{% url 'gestion_cuentas' %}'"
+                                    title="Gestión de Cuentas">
+                                </button>
+                                </li>
+                                {% endif %}
+                                <!-- End: Gestión de Cuentas -->
+
+                                <!-- Start: Factores -->
+                                <li class="nav-item mx-1">
+                                    <!-- Start: Factores_btn -->
+                                    <button class="btn p-0 border-0 bg-transparent">
+                                        <img src="{% static 'core/img/home.png' %}" style="width: 50px;height: 50px;"
+                                        onclick="window.location.href='{% url 'home' %}'"> <!-- Cambiar Link 'home' para añadir otro link -->
+                                    </button>
+                                    <!-- End: Factores_btn -->
+                                </li>
+                                <!-- End: Factores -->
+
+                                <!-- Start: Profile -->
+                                <li class="nav-item mx-1">
+                                    <!-- Start: Profile_btn -->
+                                    <button class="btn p-0 border-0 bg-transparent">
+                                        <img src="{% static 'core/img/usuario.png' %}" style="width: 50px;height: 50px;"
+                                            onclick="window.location.href='{% url 'profile' %}'" title="Perfil"> <!-- Cambiar Link 'home' para añadir otro link -->
+                                    </button>
+                                    <!-- End: Profile_btn -->
+                                </li>
+                                <!-- End: Profile -->
+                                <!-- Start: Logout -->
+                                <li class="nav-item mx-1">
+                                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn p-0 border-0 bg-transparent">
+                                        <img src="{% static 'core/img/Logout.png' %}" style="width:50px;height:50px;" alt="Cerrar sesión">
+                                    </button>
+                                    </form>
+                                </li>
+                                <!-- End: Logout -->
+                            </ul>
+                            <!-- End: Derecha_Barra -->
+                        </div>
+                    </div>
+                    <!-- End: Derecha -->
+
+                    <!-- Breadcrumbs: -->
+                    <ol class="breadcrumb text-start mt-0 mb-0 pb-0 me-0 pe-0 ps-1 ms-3" style="font-size: 14px;width: 90vw;margin-left: 50px;">
+                        {% block breadcrumbs %}
+                            <li class="breadcrumb-item"><a href="{% url 'home' %}"><span style="font-size: 14px;color: white;">Home</span></a></li>
+                        {% endblock %}
+                    </ol>
+
+                </div>
+
+                </div>
+            </nav>
+            <!-- End: Barra_Navegacion -->
+        </header>
+
+        <!-- Espacio del Main de las aplicaciones -->
+        <div class="page-content">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <!-- Start: Footer Basic -->
+        <footer class="text-center" style="background: var(--bs-gray-300); height: 50px; display: flex; align-items: center; justify-content: center;">
+            <div class="container text-muted m-0 p-0">
+                <p class="mb-0">© 2025 ICESI. Todos los derechos reservados.</p>
+            </div>
+        </footer>
+        <!-- End: Footer Basic -->
+
+        <script src="{% static 'core/bootstrap/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'global/main.js' %}"></script>
+    </div>
+</body>
+{% block extra_js %}{% endblock %}
+<script src="https://kit.fontawesome.com/2b21498340.js" crossorigin="anonymous"></script>
+<script src="{% static 'global/main.js' %}"></script>
+
+</html>

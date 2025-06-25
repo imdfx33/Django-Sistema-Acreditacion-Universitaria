@@ -1,0 +1,67 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión</title>
+  <link rel="stylesheet" href="{% static 'login/css/login.css' %}">
+  <link rel="stylesheet" href="{% static 'login/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'login/css/auth-extra.css' %}">
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <img src="{% static '/login/imgs/icesi_logo.png' %}" alt="Logo ICESI" class="login-logo">
+        <h2>Iniciar sesión</h2>
+    <form method="post" class="login-form">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <div class="form-group">
+        {{ form.cedula.label_tag }}
+        <div class="input-container">
+          {{ form.cedula }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        {{ form.password.label_tag }} 
+        <!--<label for="id_password">Contraseña</label>-->
+        <div class="input-container">
+          {{ form.password }}
+          <!--<input type="password" name="password" id="id_password" placeholder="Ingrese su contraseña" required>-->
+          <img src="{% static 'login/imgs/eye-closed.png' %}" 
+            alt="Mostrar contraseña" 
+            class="toggle-password" 
+            id="togglePassword" 
+            tabinedex="0"
+            onclick="togglePasswordVisibility()">
+        </div>
+      </div>
+      <div class="form-links">
+        <a href="{% url 'password_reset' %}">¿Olvidó su contraseña?</a>
+        <a href="{% url 'register_start' %}">¿No tiene cuenta? Registrarse</a>
+      </div>
+      <button type="submit" class="btn btn-primary login-btn">Acceder</button>
+    </form>
+  </div>
+
+  <script>
+    function togglePasswordVisibility() {
+    const passwordInput = document.getElementById("id_password");
+    const toggleIcon = document.getElementById("togglePassword");
+
+    const isHidden = passwordInput.type === "password";
+    passwordInput.type = isHidden ? "text" : "password";
+
+    toggleIcon.src = isHidden 
+      ? "{% static 'login/imgs/eye-open.png' %}" 
+      : "{% static 'login/imgs/eye-closed.png' %}";
+    toggleIcon.alt = isHidden ? "Ocultar contraseña" : "Mostrar contraseña";
+    }
+  </script>
+  <script src="{% static 'login/js/auth-extra.js' %}"></script>
+  <script src="{% static 'core/js/login-adapt.js' %}" defer></script>
+</body>
+</html>

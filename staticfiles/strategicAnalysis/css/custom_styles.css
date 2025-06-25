@@ -1,0 +1,39 @@
+.file-pill-container {
+    padding-top: 0.5rem; /* Espacio entre textarea y pills */
+    display: flex;
+    flex-wrap: wrap; /* Permite que las pastillas pasen a la siguiente línea */
+    gap: 0.5rem; /* Espacio entre pastillas */
+}
+.file-pill {
+    display: inline-flex; /* Alinea icono y texto horizontalmente */
+    align-items: center;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.85rem;
+    background-color: #f0f0f0; /* Un gris claro */
+    border: 1px solid #d1d1d1;
+    border-radius: 1rem; /* Bordes redondeados para efecto pastilla */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    max-width: 250px; /* Evita que las pastillas sean demasiado anchas */
+}
+.file-pill .file-icon {
+    margin-right: 0.4rem;
+    font-size: 0.9em; /* Icono un poco más pequeño que el texto */
+}
+.file-pill .file-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Para nombres de archivo largos */
+}
+.file-pill .file-link {
+    margin-left: 0.5rem;
+    color: #007bff; /* Azul para el enlace */
+    text-decoration: none;
+}
+.file-pill .file-link:hover {
+    text-decoration: underline;
+}
+.file-pill .file-size {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-left: 0.3rem;
+}

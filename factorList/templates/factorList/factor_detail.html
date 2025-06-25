@@ -1,0 +1,87 @@
+{% extends "projects/project_detail.html" %}
+{% load static %}
+
+{% block title %}Detalle de Factor{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'global/main.js' %}"></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+{{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'factor_list' %}"><span style="font-size: 14px;color: white;">Factores</span></a></li>
+  <li class="breadcrumb-item"><a href="{% url 'factor_detail' factor.pk %}"><span style="font-size: 14px;color: white;">{{factor.name}}</span></a></li>
+{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <h1>Proyecto: {{ factor.project.name }}</h1>
+    <h2>Factor: {{ factor.name }}</h2>
+    <p><strong>Descripción:</strong><br>{{ factor.description|linebreaksbr }}</p>
+    <p><strong>Duración:</strong> {{ factor.start_date }} – {{ factor.end_date }}</p>
+    <p><strong>Peso:</strong> {{ factor.ponderation|default:"N/A" }} </p>
+    <a href="{% url 'factor_edit' factor.pk %}" class="btn btn-secondary">
+        Editar
+    </a>
+    <a href="{% url 'factor_delete' factor.pk %}" class="btn btn-danger">
+        Eliminar
+    </a>
+    <h3>Progreso</h3>
+    <div style="background:#eee;border-radius:6px;overflow:hidden;">
+        <div style="background:#2B77E0;height:14px;width:{{ factor.approved_percentage }}%;"></div>
+    </div>
+    
+    <p>{{ factor.approved_percentage }} % de aspectos aprobados</p>
+
+    <h3 style="margin-top:2rem;">Documento asociado</h3>
+    <p>
+      {% if factor.document_link %}
+        <a href="{{ factor.document_link }}" target="_blank" rel="noopener">
+          <img src="{% static 'factorManager/images/google-docs.png' %}"
+              alt="Google Docs"
+              style="width:64px; height:64px; vertical-align:middle;">
+          &nbsp;Abrir en Google Docs
+        </a>
+      {% else %}
+        <span class="text-muted">Aún no hay documento.</span>
+      {% endif %}
+    </p>
+
+    <h3>Características</h3>
+    <ul>
+        {% for trait in traits %}
+          <li>
+            <strong>{{ trait.name }}</strong>
+            ({{ trait.approved_aspects }}/{{ trait.total_aspects }} Aspectos aprobados)
+            — <a href="{% url 'trait_detail' trait.pk %}">ver</a>
+          </li>
+        {% empty %}
+          <li>Sin características asignadas.</li>
+        {% endfor %}
+      </ul>      
+
+    <div class="buttons" style="margin-top:1rem;">
+        <a href="{% url 'trait_create_for_factor' factor.pk %}" class="btn btn-primary">
+            Añadir Característica
+        </a>
+    </div>
+
+    <h3 style="margin-top:2rem;">Aprobación</h3>
+    <p>Estado actual: <strong>{{ factor.get_status_display }}</strong></p>
+    <div class="buttons">
+      <a href="{% url 'factor_approve' factor.pk %}" class="btn btn-primary"
+        {% if factor.approved_percentage < 100 or factor.status == 'approved' %}
+          style="pointer-events:none;opacity:.6;"
+        {% endif %}>
+        Aprobar
+      </a>
+        <a href="{% url 'factor_reject' factor.pk %}"  class="btn btn-danger"
+          {% if factor.status == 'rejected' %}style="pointer-events:none;opacity:.6;"{% endif %}>
+            Rechazar
+        </a>
+    </div>
+</div>
+{% endblock %}

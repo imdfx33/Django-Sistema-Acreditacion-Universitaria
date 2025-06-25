@@ -1,0 +1,231 @@
+/* auth-extra.css */
+/* ==========================================
+   Variables y globales
+   ========================================== */
+:root {
+  --color-icesi-blue:      #2f7df1;
+  --color-white:           #FFFFFF;
+  --color-overlay:         rgba(255,255,255,0.15);
+  --transition-fast:       all 0.3s ease;
+  --login-circle-size:     min(70vmin, 450px);
+}
+
+/* ==========================================
+   BODY y fondos de círculo
+   ========================================== */
+.login-body {
+  background-color: var(--color-icesi-blue);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Ccircle cx='250' cy='250' r='200' fill='%23FFFFFF' opacity='0.1'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  transition: var(--transition-fast);
+}
+.login-body::before,
+.login-body::after {
+  content: "";
+  position: absolute;
+  background: var(--color-white);
+  border-radius: 50%;
+  transition: var(--transition-fast);
+}
+.login-body::before {
+  width: calc(var(--login-circle-size) * 1.2);
+  height: calc(var(--login-circle-size) * 1.2);
+  top: -10%;
+  left: -15%;
+  opacity: 0.05;
+}
+.login-body::after {
+  width: calc(var(--login-circle-size) * 1.5);
+  height: calc(var(--login-circle-size) * 1.5);
+  bottom: -20%;
+  right: -25%;
+  opacity: 0.03;
+}
+
+/* ==========================================
+   WRAPPER y TARJETA 3D
+   ========================================== */
+.login-wrapper {
+  perspective: 1200px;
+}
+.login-card {
+  width: var(--login-circle-size);
+  height: var(--login-circle-size);
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s var(--transition-fast);
+  animation: fadeInUp 0.6s ease-out both;
+  margin: auto;
+}
+.login-card.is-flipped {
+  transform: rotateY(180deg);
+}
+
+/* ==========================================
+   FACES (login / register)
+   ========================================== */
+.face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+.face.back {
+  transform: rotateY(180deg);
+}
+
+/* ==========================================
+   LOGO y CABECERA
+   ========================================== */
+.face .login-logo {
+  max-width: 120px;
+  margin-bottom: 1rem;
+}
+.face h2 {
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+  color: var(--color-icesi-blue);
+  text-transform: uppercase;
+}
+
+/* ==========================================
+   CONTENEDOR DE FORMULARIO
+   ========================================== */
+.face .login-form {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* ==========================================
+   INPUT + TOGGLE PASSWORD
+   ========================================== */
+.input-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+.input-container input {
+  width: 100%;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background: #f9f9f9;
+  transition: var(--transition-fast);
+}
+.input-container input:focus {
+  border-color: var(--color-icesi-blue);
+  box-shadow: 0 0 0 3px var(--color-overlay);
+  outline: none;
+}
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  opacity: 0.7;
+}
+.toggle-password.visible {
+  opacity: 1;
+}
+.toggle-password:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* ==========================================
+   BOTONES
+   ========================================== */
+.login-btn {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  border: none;
+  border-radius: 25px;
+  background: var(--color-icesi-blue);
+  color: var(--color-white);
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+.login-btn:hover {
+  background: #265cb1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* ==========================================
+   LINKS y FLIP-BTN
+   ========================================== */
+.form-links {
+  font-size: 0.85rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.form-links a,
+.flip-btn {
+  background: none;
+  border: none;
+  color: var(--color-icesi-blue);
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+.form-links a:hover,
+.flip-btn:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================
+   ANIMACIÓN FADE-IN
+   ========================================== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ==========================================
+   RESPONSIVIDAD
+   ========================================== */
+@media (max-width: 576px) {
+  .login-body::before,
+  .login-body::after {
+    display: none;
+  }
+  .login-card {
+    width: 90vw;
+    height: 90vw;
+    padding: 1.5rem;
+  }
+  .input-container input {
+    padding: 0.75rem 2rem 0.75rem 1rem;
+  }
+}

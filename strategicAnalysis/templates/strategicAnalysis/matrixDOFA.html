@@ -1,0 +1,149 @@
+{% extends 'home/etapa4.html' %}
+{% load static %}
+
+{% block title %}Matrix DOFA{% endblock %}
+
+{% block breadcrumbs %}
+{{ block.super }}
+<li class="breadcrumb-item"><a href="{% url 'matrixDOFA' %}"><span style="font-size: 14px;color: white;">Matrix DOFA</span></a></li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3 mb-4">
+    {# Hidden input for CSRF token, JavaScript will use this #}
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    <!-- Header: Title and Buttons -->
+    <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-white rounded shadow-sm">
+        <h2 class="h5 mb-0">Matrix DOFA</h2>
+        <div>
+            <button type="button" class="btn btn-primary btn-sm" id="saveDofaButton">Guardar</button>
+        </div>
+    </div>
+
+    <!-- DOFA Matrix textareas (ensure they have the correct IDs used in JS) -->
+    <div class="matrix-dofa-container">
+        <div class="row g-2 mb-2">
+            <div class="col-md-6">
+                <div class="quadrant-card d-flex h-100">
+                    <div class="swot-label-strip d-flex align-items-center justify-content-center p-1">
+                        <span class="vertical-text">Fortalezas</span>
+                    </div>
+                    <div class="swot-content-area flex-grow-1 p-2">
+                        <textarea class="form-control h-100 swot-textarea" placeholder="Describe las fortalezas aquí..." id="fortalezas-json">{{ fortalezas_data|default_if_none:"" }}</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="quadrant-card d-flex h-100">
+                    <div class="swot-content-area flex-grow-1 p-2">
+                        <textarea class="form-control h-100 swot-textarea" placeholder="Describe las debilidades aquí..." id="debilidades-json">{{ debilidades_data|default_if_none:"" }}</textarea>
+                    </div>
+                    <div class="swot-label-strip d-flex align-items-center justify-content-center p-1">
+                        <span class="vertical-text">Debilidades</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-2">
+            <div class="col-md-6">
+                <div class="quadrant-card d-flex h-100">
+                    <div class="swot-label-strip d-flex align-items-center justify-content-center p-1">
+                        <span class="vertical-text">Oportunidades</span>
+                    </div>
+                    <div class="swot-content-area flex-grow-1 p-2">
+                        <textarea class="form-control h-100 swot-textarea" placeholder="Describe las oportunidades aquí..." id="oportunidades-json">{{ oportunidades_data|default_if_none:"" }}</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="quadrant-card d-flex h-100">
+                    <div class="swot-content-area flex-grow-1 p-2">
+                        <textarea class="form-control h-100 swot-textarea" placeholder="Describe las amenazas aquí..." id="amenazas-json">{{ amenazas_data|default_if_none:"" }}</textarea>
+                    </div>
+                    <div class="swot-label-strip d-flex align-items-center justify-content-center p-1">
+                        <span class="vertical-text">Amenazas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmSaveDofaModal" tabindex="-1" aria-labelledby="confirmSaveDofaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmSaveDofaModalLabel">Confirmar Guardado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Seguro que quieres guardar los cambios en la Matriz DOFA?
+            </div>
+            <div class="modal-footer">
+                {# data-bs-dismiss="modal" on "No" button will close the modal #}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="confirmSaveDofaNo">No</button>
+                <button type="button" class="btn btn-primary" id="confirmSaveDofaYes">Sí</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .quadrant-card {
+        background-color: #F0F0F0;
+        border-radius: 8px;
+        min-height: 180px;
+        overflow: hidden;
+    }
+
+    .swot-label-strip {
+        background-color: #EAEAEA;
+        flex-basis: 40px;
+        flex-shrink: 0;
+    }
+
+    .vertical-text {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        white-space: nowrap;
+        font-weight: 500;
+        font-size: 0.8rem;
+        color: #333;
+    }
+
+    .swot-content-area {
+        background-color: #F0F0F0;
+    }
+
+    .swot-textarea {
+        background-color: #DCDCDC;
+        border-radius: 6px !important;
+        border: none !important;
+        resize: none;
+        font-size: 0.85rem;
+        min-height: 140px;
+    }
+
+    .swot-textarea::placeholder {
+        color: #6c757d;
+        font-style: italic;
+        font-size: 0.8rem;
+    }
+
+    .row.g-2 {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .row.g-2 > [class*='col-'] {
+        display: flex;
+        flex-direction: column;
+    }
+    .quadrant-card.h-100 {
+        flex-grow: 1;
+    }
+
+</style>
+<script src="{% static 'strategicAnalysis/js/dofa_script.js' %}" defer></script>
+{% endblock %}

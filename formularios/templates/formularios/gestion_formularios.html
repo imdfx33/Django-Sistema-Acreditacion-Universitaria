@@ -1,0 +1,87 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Gestion de Formularios{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'formularios/css/styles.css' %}">
+{% endblock %}
+
+{% load file_utils %}
+
+{% block content %}
+    <h2>Gestión de Formularios</h2>
+
+    <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th>Id Formulario</th>
+                <th>Fecha de modificación</th>
+                <th>Archivo</th>
+                <th>Estado</th>
+                <th>Reporte</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for formulario in formularios %}
+                <tr data-form-id="{{ formulario.form_id }}">
+                    <td>
+                        <div class="info-formulario">
+                            <span class="id_formulario">{{ formulario.form_id }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="info-formulario">
+                            <span class="fecha_formulario">{{ formulario.modification_date|date:"d/m/Y" }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        {% if formulario.archivo %}
+                            <a href="{{ formulario.archivo.url }}" download="{{ formulario.archivo.name }}">
+                                {{ formulario.archivo.name|basename }}
+                            </a>
+                        {% else %}
+                            Sin archivo
+                        {% endif %}
+                    </td>
+                    <td class="estado-celda">
+                    <span class="{{ formulario.status|slugify }}">
+                        {{ formulario.get_status_display }}
+                    </span>
+                        <div class="estado-opciones">
+                            <form method="post" action="{% url 'actualizar-estado' formulario.form_id %}">
+                                {% csrf_token %}
+                                {% for value, label in formulario.STATUS_CHOICES %}
+                                    <button type="submit" name="estado" value="{{ value }}">{{ label }}</button>
+                                {% endfor %}
+                            </form>
+                        </div>
+                    </td>
+                    <td>
+                        {% if formulario.pdf_report %}
+                            <a href="{{ formulario.pdf_report.file.url }}" target="_blank">Ver PDF</a>
+                        {% else %}
+                            <form method="post" action="{% url 'adjuntar-pdf' formulario.form_id %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="file" name="archivo" accept=".pdf" style="display: none;" onchange="this.form.submit()">
+                                <a href="#" onclick="this.previousElementSibling.click(); return false;">Adjuntar</a>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <form method="post" action="{% url 'crear-formulario' %}" enctype="multipart/form-data" style="display: none;">
+        {% csrf_token %}
+        <input type="file" name="archivo" id="archivo-formulario" onchange="this.form.submit()">
+    </form>
+
+    <button id="boton-agregar-formulario">
+        Agregar Formulario
+    </button>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'meeting_List/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'meeting_List/css/calendar_custom.css' %}">
+{% endblock %}
+{% block title %}Calendario de Reuniones{% endblock %}
+
+{% block breadcrumbs %}
+{{block.super}}
+<li class="breadcrumb-item"> <a href="{% url 'calendar' %}"> <span style="font-size:14px; color:white;"> Calendario </span> </a> </li>
+{% endblock %}
+    
+{% block content %}
+
+<div class="container my -4">
+<div class="calendar-header d-flex justify-content-between align-items-center mb-4">
+    <h2>Calendario Semanal</h2>
+    <div class="navigation-buttons">
+        <a href="?start={{ prev_start }}" class="btn-nav">&larr; Semana Anterior</a>
+        <a href="?start={{ next_start }}" class="btn-nav">Semana Siguiente &rarr;</a>
+    </div>
+</div>
+</div>
+
+<div class="calendar-grid d-flex gap-3">
+    {% for day, events in events_by_day %}
+        <div class="day-column flex-fill">
+            <div class="day-header text-center py-2">{{ day|date:"D d M" }}</div>
+            <div class="day-events d-flex flex-column gap-2 py-2">
+                {% if events %}
+                    {% for ev in events %}
+                        <a href="{% url 'list_events' %}" class="event-block d-flex align-items-center justify-content-between p-2 rounded">
+                            <span class="event-time">{{ ev.time|time:"H:i" }}</span>
+                            <span class="event-title flex-fill ms-2 text-truncate">{{ ev.title }}</span>
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-event-center text-muted">—</div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% comment %} Comprobación de roles para mostrar el botón {% endcomment %}
+{% if user.is_authenticated %}
+    {% if user.is_super_admin_role or user.is_mini_admin_role or user.is_akadi_role %}
+        <div class="text-center mb-3">
+            <a href="{% url 'create_event' %}" class="btn btn-primary">
+                <i class="fas fa-plus-circle mr-2"></i>    Crear Nueva Reunión
+            </a>
+        </div>
+    {% endif %}
+{% endif %}
+
+{% endblock %}

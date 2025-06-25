@@ -1,0 +1,15 @@
+<p>Hola {{ user.get_full_name }},</p>
+
+<p>Has sido invitado a la reunión <strong>{{ event.title }}</strong>.</p>
+
+<ul>
+  <li><strong>Descripción:</strong> {{ event.description }}</li>
+  <li><strong>Fecha:</strong> {{ event.date }} a las {{ event.time }}</li>
+  {% if event.meeting_type == 'Virtual' %}
+    <li><strong>Enlace:</strong> <a href="{{ event.link }}">{{ event.link }}</a></li>
+  {% else %}
+    <li><strong>Ubicación:</strong> {{ event.location }}</li>
+  {% endif %}
+</ul>
+
+<p>¡Nos vemos!</p>

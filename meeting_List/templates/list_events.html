@@ -1,0 +1,53 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'meeting_List/css/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'meeting_List/css/list_events.css' %}">
+{% endblock %}
+
+{% block title %}Tus Reuniones{% endblock %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'list_events' %}"><span style="font-size:14px; color:white;">Detalle Reuniones</span></a></li>
+{% endblock %}
+
+{% block content %}
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="form-card text-center">
+          <h2 class="form-title mb-4">Tus Reuniones</h2>
+
+          {% if events %}
+            <ul class="event-list">
+              {% for event in events %}
+                <li class="event-item text-start">
+                  <h3>{{ event.title }}</h3>
+                  <p><strong>Fecha:</strong> {{ event.date }}</p>
+                  <p><strong>Hora:</strong> {{ event.time }}</p>
+                  <p><strong>Tipo:</strong> {{ event.meeting_type }}</p>
+                  <p><strong>Ubicación:</strong> {{ event.location|default:"N/A" }}</p>
+                  {% if event.link %}
+                    <p><strong>Link:</strong> <a href="{{ event.link }}" target="_blank">{{ event.link }}</a></p>
+                  {% endif %}
+                  <p><strong>Participantes:</strong> {{ event.participants.all|join:", " }}</p>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>No hay reuniones agendadas aún.</p>
+          {% endif %}
+        </div>
+
+        <div class="text-center mt-4">
+          <a href="{% url 'calendar' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Volver al Calendario
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

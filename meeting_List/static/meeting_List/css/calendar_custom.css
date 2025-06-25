@@ -1,0 +1,39 @@
+/* calendar_custom.css */
+.calendar-grid { /* respaldo si no usas utilidades */
+  /* display: flex; gap: 1rem; */
+}
+
+.day-column {
+  background: #F8FAFC;
+  border-radius: 8px;
+}
+
+.day-header {
+  background: #FFFFFF;
+  border-bottom: 1px solid #E0E0E0;
+  font-weight: 600;
+}
+
+.day-events {
+  min-height: 200px;
+}
+
+.event-block {
+  background: #E6F0FF;
+  color: #0B2565;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.event-block:hover {
+  background: #DDEBFF;
+}
+
+.event-time {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.event-title {
+  overflow: hidden;
+}

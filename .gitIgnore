@@ -1,0 +1,8 @@
+*.pyc
+__pycache__/
+.venv
+.idea
+venv/
+*.iml
+202501-proyecto-equipo_3.iml
+archivos_subidos/

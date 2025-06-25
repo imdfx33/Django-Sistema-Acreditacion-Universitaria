@@ -1,0 +1,34 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Seleccionar Plantilla{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'global/main.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <h2>Selecciona una plantilla para «{{ factor.name }}»</h2>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;">
+        {% for tpl in templates %}
+        <div style="border:1px solid #ccc;padding:10px;text-align:center;">
+            <img src="{% static tpl.icon %}" alt="{{ tpl.name }}" style="width:100%;height:120px;object-fit:cover;">
+            <p>{{ tpl.name }}</p>
+            <a class="btn btn-primary"
+               href="{% url 'select_template' factor.pk tpl.id %}">Elegir</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <p style="margin-top:20px;">
+        <a href="{% url 'factor_detail' factor.pk %}" class="btn btn-secondary">
+            Omitir y continuar
+        </a>
+    </p>
+</div>
+{% endblock %}

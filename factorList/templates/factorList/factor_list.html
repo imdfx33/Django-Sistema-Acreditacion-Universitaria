@@ -1,0 +1,156 @@
+{% extends "home/etapa3.html" %}
+{% load static %}
+
+{% block title %}Lista de Factores{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'global/main.js' %}"></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+{{ block.super }}
+    <li class="breadcrumb-item"><a href="{% url 'factor_list' %}"><span style="font-size: 14px;color: white;">Factores</span></a></li>
+{% endblock %}
+
+{% block content %}
+<div class="panel">
+<h2>Factores</h2>
+<form method="get" class="filters-form" style="margin:1rem 0; display:flex; gap:1rem; align-items:center;">
+    <!-- Buscador -->
+    <div>
+    <input type="text"
+            name="q"
+            placeholder="🔍 Buscar por nombre..."
+            value="{{ request.GET.q|default_if_none:'' }}"
+            style="padding:0.4rem 0.6rem;"/>
+    </div>
+
+    <!-- Filtro por proyecto -->
+    <div>
+    <select name="proyecto" style="padding:0.4rem;">
+        <option value="">Todos los proyectos</option>
+        {% for proyecto in proyectos %}
+        <option value="{{ proyecto.id }}"
+            {% if request.GET.proyecto == proyecto.id|stringformat:"s" %}selected{% endif %}>
+            {{ proyecto.name }}
+        </option>
+        {% endfor %}
+    </select>
+    </div>
+
+    <!-- Filtro por estado -->
+    <div>
+    <select name="estado" style="padding:0.4rem;">
+        <option value="">Todos los estados</option>
+        {% for key, label in estado_choices %}
+        <option value="{{ key }}"
+            {% if request.GET.estado == key %}selected{% endif %}>
+            {{ label }}
+        </option>
+        {% endfor %}
+    </select>
+    </div>
+    <div>
+        <label for="start_date">Desde: </label>
+    </div>
+    <!-- Filtro por fecha inicio -->
+    <div>
+        <!-- <Desde: pero al lado de la casilla -->
+
+        <input type="date"
+            id="start_date"
+            name="start_date"
+            value="{{ request.GET.start_date|default_if_none:'' }}"
+            style="padding:0.4rem;"/>
+    </div>
+    <div>
+        <label for="start_date">Hasta: </label>
+    </div>
+    <div>
+        <input type="date"
+            id="end_date"
+            name="end_date"
+            value="{{ request.GET.end_date|default_if_none:'' }}"
+            style="padding:0.4rem;"/>
+    </div>
+
+    <!-- Botón aplicar -->
+    <div>
+    <button type="submit" class="btn btn-secondary" style="padding:0.4rem 0.8rem;">
+        Aplicar
+    </button>
+    </div>
+</form>
+
+<table>
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>Fechas</th>
+        <th>Progreso</th>
+        <th>Estado</th>
+        <th>Responsables</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for factor in factors %}
+    <tr class="clickable-row" data-href="{% url 'factor_detail' factor.pk %}">
+        <td>{{ factor.name }}</td>
+        <td>{{ factor.start_date }} — {{ factor.end_date }}</td>
+        <td style="min-width:180px;">
+        <div class="progress-bar">
+            <div class="progress-fill" style="width:{{ factor.approved_percentage }}%;"></div>
+        </div>
+        </td>
+        <td>{{ factor.get_status_display }}</td>
+        <td class="responsibles-cell">
+        <div class="avatars">
+            {% for u in factor.responsables.all|slice:":3" %}
+            <img src="{{ u.profile.avatar.url }}"
+                title="{{ u.get_full_name }}"
+                class="avatar-sm">
+            {% endfor %}
+            {% if factor.responsables.count > 3 %}
+            +{{ factor.responsables.count|add:"-3" }}
+            {% endif %}
+        </div>
+        <div class="responsibles-popup">
+            {% for u in factor.responsables.all %}
+            <div class="resp-item">{{ u.get_full_name }}</div>
+            {% empty %}
+            <div class="resp-item">Sin responsables</div>
+            {% endfor %}
+        </div>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<p style="text-align:center;margin-top:1rem;">
+    <a class="btn btn-primary" href="{% url 'factor_create' %}">Crear Factor</a>
+</p>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Navegar al detalle solo al hacer clic
+    document.querySelectorAll('.clickable-row').forEach(row =>
+    row.addEventListener('click', () => {
+        window.location = row.dataset.href;
+    })
+    );
+    // Mostrar popup de responsables
+    document.querySelectorAll('.responsibles-cell').forEach(cell => {
+    cell.addEventListener('mouseenter', () =>
+        cell.querySelector('.responsibles-popup').style.display = 'block'
+    );
+    cell.addEventListener('mouseleave', () =>
+        cell.querySelector('.responsibles-popup').style.display = 'none'
+    );
+    });
+});
+</script>
+{% endblock %}

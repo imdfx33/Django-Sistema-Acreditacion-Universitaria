@@ -1,0 +1,101 @@
+/* === Calendario Semanal === */
+
+/* Contenedor principal */
+.container-calendar {
+    padding: 20px;
+    background: #ffffff;
+}
+
+/* Encabezado */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Botones de navegación */
+.navigation-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-nav {
+    padding: 8px 12px;
+    background-color: #2563eb;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn-nav:hover {
+    background-color: #1d4ed8;
+}
+
+/* Grilla de calendario */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+}
+
+/* Cada día */
+.day-column {
+    background: #f1f5f9;
+    border-radius: 10px;
+    padding: 10px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Cabecera de cada día */
+.day-header {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #0f172a;
+}
+
+/* Contenedor de eventos */
+.day-events {
+    flex: 1;
+}
+
+/* Evento */
+.event-block {
+    background: #e0f2fe;
+    border-left: 4px solid #2563eb;
+    margin-bottom: 6px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.event-block:hover {
+    background: #bae6fd;
+}
+
+/* Hora del evento */
+.event-time {
+    display: block;
+    font-weight: bold;
+    font-size: 11px;
+    color: #0f172a;
+}
+
+/* Título del evento */
+.event-title {
+    font-size: 12px;
+    color: #0f172a;
+}
+
+/* Si no hay eventos */
+.no-event {
+    color: #94a3b8;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 20px;
+}

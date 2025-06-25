@@ -1,0 +1,70 @@
+{% extends 'login/profile.html' %}
+{% load static %}
+
+{% block title %}Editar Perfil{% endblock %}
+
+{# --- Asegúrate de cargar Bootstrap y tu CSS aquí --- #}
+{% block extra_css %}
+  <!-- Tu CSS base (si no lo carga base.html) -->
+  <link rel="stylesheet" href="{% static 'login/css/base.css' %}">
+  <!-- Tus overrides / estilos de login -->
+  <link rel="stylesheet" href="{% static 'login/css/login.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+{{block.super}}
+<li class="breadcrumb-item"> <a href="{% url 'edit_profile' %}"> <span style="font-size:14px; color:white;"> Editar Perfil </span> </a> </li>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+
+      <div class="card shadow-sm">
+        <div class="card-header bg-white border-0 text-center">
+          <h2 class="mb-1">Editar Perfil</h2>
+          <small class="text-muted">Actualiza tu nombre y apellido</small>
+        </div>
+
+        <div class="card-body">
+
+          <form method="post"
+                class="login-form login-form-spaced mx-auto"
+                style="max-width: 480px;"
+                novalidate>
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="form-group">
+              {{ form.first_name.label_tag }}
+              {{ form.first_name }}
+              {{ form.first_name.errors }}
+            </div>
+
+            <div class="form-group">
+              {{ form.last_name.label_tag }}
+              {{ form.last_name }}
+              {{ form.last_name.errors }}
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-between">
+              <button type="submit" class="btn btn-primary flex-fill m-1">
+                Guardar Cambios
+              </button>
+              <a href="{% url 'profile' %}" class="btn btn-secondary flex-fill m-1">
+                Cancelar
+              </a>
+              <a href="{% url 'password_reset' %}" class="btn btn-outline-primary flex-fill m-1">
+                Cambiar Contraseña
+              </a>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{# reports/templates/reports/generate_button.html #}
+{% load static %}
+
+{% if all_finalized and user_can_generate_report %}
+    <div id="generate-report-container"> {# Contenedor general para el botón, spinner y mensajes #}
+        <div id="generate-report-controls" class="d-flex align-items-center mb-2"> {# Contenedor para el botón y el spinner/texto #}
+            <button id="btn-generate-final-report"
+                    class="btn btn-success btn-lg"
+                    data-generate-url="{% url 'reports:generate_final_report' %}">
+                <i class="fas fa-file-export me-2"></i>Generar Informe Final
+            </button>
+            <div id="spinner-assembly" class="ms-3" style="display: none;"> {# Agrupa el spinner y el texto descriptivo #}
+                <span id="final-report-spinner" class="spinner-border text-primary" role="status">
+                    {# Se quita spinner-border-sm y text-light. El tamaño se controlará vía CSS. text-primary dará mejor contraste. #}
+                </span>
+                <span id="final-report-spinner-text" class="ms-2 align-middle">Generando, por favor espere...</span>
+            </div>
+        </div>
+        <div id="final-report-message"></div> {# Mensajes se mostrarán debajo del botón/spinner #}
+    </div>
+{% endif %}
+
+{# Es importante que el script se cargue después del HTML del botón/spinner #}
+<script src="{% static 'reports/js/informe.js' %}" defer></script>

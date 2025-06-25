@@ -1,0 +1,198 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Detalle: {{ factor.name }}{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+  <style>
+    .trait-card { margin-bottom: 1rem; }
+    .aspect-list-item { font-size: 0.9rem; }
+  </style>
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'etapa_3' %}"><span style="font-size: 14px; color: white;">Evidencias y Proyectos</span></a></li>
+  <li class="breadcrumb-item"><a href="{% url 'project_list' %}"><span style="font-size: 14px;color: white;">Proyectos</span></a></li>
+  <li class="breadcrumb-item"><a href="{% url 'project_detail' factor.project.pk %}"><span style="font-size: 14px;color: white;">{{ factor.project.name }}</span></a></li>
+
+  <li class="breadcrumb-item"><a href="{% url 'factor_list' %}?project_id={{ factor.project.pk }}"><span style="font-size: 14px;color: white;">Factores</span></a></li>
+  <li class="breadcrumb-item active" aria-current="page">
+    <span style="font-size: 14px;color: white;">{{ factor.name|truncatechars:30 }}</span>
+  </li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-sm factor-card-detail">
+    <div class="card-header bg-light">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="factor-title mb-0">{{ factor.name }}</h2>
+          <small class="text-muted">Proyecto: <a href="{% url 'project_detail' factor.project.pk %}">{{ factor.project.name }}</a></small>
+        </div>
+        <div class="factor-actions-header">
+          {% if can_edit_factor %}
+            <a href="{% url 'factor_edit' factor.pk %}" class="btn btn-sm btn-outline-secondary" title="Editar Factor {{ factor.name }}" aria-label="Editar Factor {{ factor.name }}">
+                <i class="fas fa-edit"></i>
+            </a>
+          {% endif %}
+          {% if can_delete_factor %}
+            <a href="{% url 'factor_delete' factor.pk %}" class="btn btn-sm btn-outline-danger ms-2" title="Eliminar Factor {{ factor.name }}" aria-label="Eliminar Factor {{ factor.name }}">
+                <i class="fas fa-trash-alt"></i>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-md-7">
+          <p><strong>Descripción:</strong> {{ factor.description|default:"No especificada."|linebreaksbr }}</p>
+          <p><strong>Duración:</strong> {{ factor.start_date|date:"d M, Y" }} – {{ factor.end_date|date:"d M, Y" }}</p>
+          <p><strong>Ponderación en el Proyecto:</strong> {{ factor.ponderation|default:"N/A" }}</p>
+          {% if user_factor_role %}
+            <p><strong>Tu rol en este factor:</strong> <span class="badge bg-info text-dark">{{ user_factor_role|capfirst }}</span></p>
+          {% endif %}
+           {% if factor.responsables.all %}
+            <p><strong>Responsables:</strong>
+                {% for resp in factor.responsables.all %}
+                    <span class="badge bg-light text-dark border">{{ resp.get_full_name }}</span>
+                {% empty %}
+                    <span class="text-muted">No asignados</span>
+                {% endfor %}
+            </p>
+          {% endif %}
+        </div>
+        <div class="col-md-5">
+          <p><strong>Estado de Aprobación:</strong> 
+            <span class="badge {% if factor.status == 'approved' %}bg-success{% elif factor.status == 'rejected' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+              {{ factor.get_status_display }}
+            </span>
+          </p>
+          {% if factor.document_link %}
+            <p class="mt-2">
+              <a href="{{ factor.document_link }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <i class="fab fa-google-drive me-1"></i> Ver Documento en Drive
+              </a>
+            </p>
+          {% else %}
+            <p class="text-muted small mt-2">
+              <i class="fas fa-file-excel text-secondary me-1"></i> No hay documento de Drive asociado.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+
+      <h4 class="mt-3">Progreso del Factor</h4>
+      <div class="progress mb-3" style="height: 25px;">
+        <div class="progress-bar {% if factor.approved_percentage == 100 %}bg-success{% elif factor.approved_percentage > 50 %}bg-info{% elif factor.approved_percentage > 0 %}bg-warning{% else %}bg-secondary{% endif %}" 
+             role="progressbar" style="width: {{ factor.approved_percentage }}%;" 
+             aria-valuenow="{{ factor.approved_percentage }}" aria-valuemin="0" aria-valuemax="100">
+          {{ factor.approved_percentage }}%
+        </div>
+      </div>
+
+      {% if can_approve_reject_factor %}
+        <div class="text-center mb-3">
+          {% if factor.status != 'approved' %}
+            {% if factor.approved_percentage == 100 %}
+            <form method="post" action="{% url 'factor_approve' factor.pk %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success btn-sm" title="Aprobar Factor {{ factor.name }}" aria-label="Aprobar Factor {{ factor.name }}"><i class="fas fa-check-circle"></i></button>
+            </form>
+            {% else %}
+            <button type="button" class="btn btn-success btn-sm disabled" title="El factor debe estar al 100% para aprobarse"><i class="fas fa-check-circle me-1"></i>Aprobar Factor</button>
+            {% endif %}
+          {% endif %}
+          {% if factor.status != 'rejected' %}
+            <form method="post" action="{% url 'factor_reject' factor.pk %}" class="d-inline ms-2">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm" title="Rechazar Factor {{ factor.name }}" aria-label="Rechazar Factor {{ factor.name }}"><i class="fas fa-times-circle"></i> Rechazar Factor</button>
+            </form>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <hr class="my-4">
+
+      <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+        <h4>Características del Factor</h4>
+        {% if can_add_trait %}
+          <a href="{% url 'trait_create' %}?factor={{ factor.id_factor }}" class="btn btn-primary btn-sm" title="Añadir Característica" aria-label="Añadir Característica al Factor {{ factor.name }}">
+              <i class="fas fa-plus"></i>
+          </a>
+        {% endif %}
+      </div>
+
+      {% if traits %}
+        <div class="accordion" id="accordionTraits">
+          {% for trait in traits %}
+          <div class="accordion-item trait-card">
+            <h2 class="accordion-header" id="headingTrait{{ trait.pk }}">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTrait{{ trait.pk }}" aria-expanded="false" aria-controls="collapseTrait{{ trait.pk }}">
+                <strong>{{ trait.name }}</strong> 
+                <span class="ms-auto me-3">
+                    ({{ trait.approved_aspects }}/{{ trait.total_aspects }} Aspectos Aprobados - {{ trait.overall_progress_percentage }}%)
+                </span>
+                 <small><a href="{% url 'trait_detail' trait.pk %}" class="btn btn-outline-info btn-sm py-0 px-1" title="Ver detalle característica"><i class="fas fa-eye"></i></a></small>
+              </button>
+            </h2>
+            <div id="collapseTrait{{ trait.pk }}" class="accordion-collapse collapse" aria-labelledby="headingTrait{{ trait.pk }}" data-bs-parent="#accordionTraits">
+              <div class="accordion-body">
+                <p class="small">{{ trait.description|truncatewords:30|default:"Sin descripción." }}</p>
+                <div class="progress mb-2" style="height: 8px;">
+                  <div class="progress-bar {% if trait.overall_progress_percentage == 100 %}bg-success{% elif trait.overall_progress_percentage > 50 %}bg-info{% else %}bg-warning{% endif %}" 
+                       role="progressbar" style="width: {{ trait.overall_progress_percentage }}%;" 
+                       aria-valuenow="{{ trait.overall_progress_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                  </div>
+                </div>
+                {% if trait.sorted_aspects %}
+                <ul class="list-unstyled">
+                    {% for aspect in trait.sorted_aspects %}
+                        <li class="aspect-list-item d-flex justify-content-between align-items-center border-bottom py-1">
+                            <span>
+                                <i class="fas {% if aspect.approved %}fa-check-circle text-success{% else %}fa-circle text-muted{% endif %} me-2"></i>
+                                {{ aspect.name }} ({{aspect.weight}}%)
+                            </span>
+                            <a href="{% url 'aspectList:aspect_detail' aspect.pk %}" class="btn btn-outline-secondary btn-sm py-0 px-1" title="Ver detalle aspecto">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                 <p class="text-muted small">Esta característica aún no tiene aspectos.</p>
+                {% endif %}
+                {% if can_add_trait %} {# Asumimos mismo permiso para añadir aspectos que características #}
+                <div class="text-end mt-2">
+                  <a href="{% url 'aspectManager:aspect_create' %}?trait={{ trait.id_trait }}" class="btn btn-outline-primary btn-sm" title="Añadir Aspecto a {{ trait.name }}" aria-label="Añadir Aspecto a {{ trait.name }}">
+                      <i class="fas fa-plus"></i>
+                  </a>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-light" role="alert">
+          Este factor aún no tiene características asignadas.
+          {% if can_add_trait %}
+            <a href="{% url 'trait_create' %}?factor={{ factor.id_factor }}" class="alert-link">Puedes añadir una ahora.</a>
+          {% endif %}
+        </div>
+      {% endif %}
+      
+      <div class="mt-4 text-center">
+        <a href="{{ factor.project.get_absolute_url }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver al Proyecto: {{ factor.project.name }}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

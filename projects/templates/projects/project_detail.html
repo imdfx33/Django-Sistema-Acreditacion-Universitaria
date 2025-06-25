@@ -1,0 +1,145 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Detalle: {{ project.name }}{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+{{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'etapa_3' %}"><span style="font-size: 14px; color: white;">Evidencias y Proyectos</span></a></li>
+  <li class="breadcrumb-item"><a href="{% url 'project_list' %}"><span style="font-size: 14px;color: white;">Proyectos</span></a></li>
+  <li class="breadcrumb-item active" aria-current="page"><span style="font-size: 14px;color: white;">{{ project.name }}</span></li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-sm project-card-detail">
+    <div class="card-header bg-light">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2 class="project-title mb-0">{{ project.name }}</h2>
+        <div class="project-actions-header">
+          {% if can_edit_project %}
+            <a href="{% url 'project_edit' project.pk %}" class="btn btn-sm btn-outline-secondary" title="Editar Proyecto {{ project.name }}" aria-label="Editar Proyecto {{ project.name }}">
+                <i class="fas fa-edit"></i>
+            </a>
+          {% endif %}
+          {% if can_delete_project %}
+            <a href="{% url 'project_delete' project.pk %}" class="btn btn-sm btn-outline-danger ms-2" title="Eliminar Proyecto {{ project.name }}" aria-label="Eliminar Proyecto {{ project.name }}">
+                <i class="fas fa-trash-alt"></i>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <p><strong>Descripción:</strong> {{ project.description|default:"No especificada."|linebreaksbr }}</p>
+          <p><strong>Creado por:</strong> {{ project.created_by.get_full_name|default:"N/A" }}</p>
+          {% if user_project_role %}
+            <p><strong>Tu rol en este proyecto:</strong> <span class="badge bg-info text-dark">{{ user_project_role|capfirst }}</span></p>
+          {% endif %}
+        </div>
+        <div class="col-md-6">
+          <p><strong>Duración:</strong> {{ project.start_date|date:"d M, Y" }} – {{ project.end_date|date:"d M, Y" }}</p>
+          <p><strong>Estado de Aprobación:</strong> 
+            {% if project.approved %}
+              <span class="badge bg-success">Aprobado</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">Pendiente de Aprobación</span>
+            {% endif %}
+          </p>
+        </div>
+      </div>
+
+      <h4 class="mt-4">Progreso General del Proyecto</h4>
+      <div class="progress mb-3" style="height: 25px;">
+        <div class="progress-bar {% if project.progress == 100 %}bg-success{% else %}bg-primary{% endif %}" role="progressbar" 
+             style="width: {{ project.progress }}%;" 
+             aria-valuenow="{{ project.progress }}" aria-valuemin="0" aria-valuemax="100">
+          {{ project.progress }}%
+        </div>
+      </div>
+
+      {% if not project.approved and project.progress == 100 and can_approve_project %}
+        <form method="post" action="{% url 'project_approve' project.pk %}" class="mb-3 text-center">
+            {% csrf_token %}
+              <button type="submit" class="btn btn-success" title="Aprobar Proyecto {{ project.name }}" aria-label="Aprobar Proyecto {{ project.name }}">
+                  <i class="fas fa-check-circle"></i>
+              </button>
+        </form>
+      {% elif project.approved %}
+         <p class="text-success text-center"><i class="fas fa-check-circle"></i> Este proyecto ya ha sido aprobado.</p>
+      {% elif project.progress < 100 and can_approve_project %}
+          <p class="text-muted text-center">El proyecto debe alcanzar el 100% de progreso para poder ser aprobado.</p>
+      {% endif %}
+
+      <hr class="my-4">
+
+      <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+        <h4>Factores del Proyecto</h4>
+        {% if can_add_factor %}
+          <a href="{% url 'factor_create' %}?project={{ project.id_project }}" class="btn btn-primary" title="Añadir Factor al Proyecto {{ project.name }}" aria-label="Añadir Factor al Proyecto {{ project.name }}">
+              <i class="fas fa-plus"></i>
+          </a>
+        {% endif %}
+      </div>
+
+      {% if factors %}
+        <div class="list-group">
+          {% for factor in factors %}
+          <a href="{% url 'factor_detail' factor.pk %}" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">{{ factor.name }}</h5>
+              <small class="text-muted">{{ factor.get_status_display }}</small>
+            </div>
+            <p class="mb-1 small">{{ factor.description|truncatewords:20|default:"Sin descripción." }}</p>
+            <div class="progress mt-1" style="height: 10px;">
+              <div class="progress-bar {% if factor.approved_percentage == 100 %}bg-success{% elif factor.approved_percentage > 50 %}bg-info{% else %}bg-warning{% endif %}" 
+                   role="progressbar" style="width: {{ factor.approved_percentage }}%;" 
+                   aria-valuenow="{{ factor.approved_percentage }}" aria-valuemin="0" aria-valuemax="100">
+              </div>
+            </div>
+             <small class="text-muted">{{ factor.approved_percentage }}% completado</small>
+          </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-light" role="alert">
+          Este proyecto aún no tiene factores asignados o no tienes permiso para visualizarlos.
+          {% if can_add_factor %}
+            <a href="{% url 'factor_create' %}?project={{ project.id_project }}" class="alert-link">Puedes añadir uno ahora.</a>
+          {% endif %}
+        </div>
+      {% endif %}
+      
+      <div class="mt-4 text-center">
+        <a href="{% url 'project_list' %}" class="btn btn-outline-secondary" title="Volver a la Lista de Proyectos" aria-label="Volver a la Lista de Proyectos">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .project-card-detail { border-radius: 0.75rem; }
+  .project-title { color: var(--bs-primary); }
+  .project-actions-header .btn { font-size: 0.85rem; }
+  .list-group-item h5 { color: var(--bs-dark); }
+</style>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'attachGeneric/attach.html' %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'global/main.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>ADJUNTAR DOCUMENTO A LA CARACTERÍSTICA «{{ trait.name }}»</h2>
+    {{ block.super }}
+</div>
+{% endblock %}
+
+{% block body_scripts %}
+{{ block.super }}
+<script>
+    // al mostrarse el modal de éxito, redirige al detalle de la Trait
+    document
+    .getElementById('successMessageModal')
+    .addEventListener('shown.bs.modal', function(){
+        setTimeout(function(){
+        window.location.href = "{% url 'trait_detail' trait.pk %}";
+        }, 3000);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load factor_permissions %} {# Cargar los nuevos template tags #}
+
+{% block title %}Administrar Factores{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+  {# Puedes añadir CSS específico para esta vista de factorManager si es necesario #}
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'etapa_3' %}"><span style="font-size: 14px;color: white;">Evidencias y Proyectos</span></a></li>
+  <li class="breadcrumb-item active" aria-current="page"><span style="font-size: 14px;color: white;">Administrar Factores</span></li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Administrar Factores</h2>
+    <div>
+      {% if can_create_factor_anywhere %}
+        {% if available_projects.count == 1 %}
+          <a href="{% url 'factor_create' %}{% if available_projects.count == 1 %}?project={{ available_projects.first.id_project }}{% elif not available_projects and project_ctx %}?project={{ project_ctx.id_project }}{% endif %}" class="btn btn-primary" title="Crear Nuevo Factor" aria-label="Crear Nuevo Factor">
+              <i class="fas fa-plus"></i>
+          </a>
+        {% elif available_projects %}
+          <a href="{% url 'factor_create' %}{% if available_projects.count == 1 %}?project={{ available_projects.first.id_project }}{% elif not available_projects and project_ctx %}?project={{ project_ctx.id_project }}{% endif %}" class="btn btn-primary" title="Crear Nuevo Factor" aria-label="Crear Nuevo Factor">
+              <i class="fas fa-plus"></i>
+          </a>
+        {% else %}
+            <p class="text-muted small mb-0">No hay proyectos disponibles para crear factores.</p>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+
+  <form method="get" class="filters-form mb-4 p-3 bg-light rounded shadow-sm">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-4">
+        <label for="q_manager" class="form-label">Buscar por nombre/descripción:</label>
+        <input type="text" name="q" id="q_manager" class="form-control form-control-sm" value="{{ current_search_query|default:'' }}" placeholder="Ej: Calidad Docente">
+      </div>
+      {% if user.is_superuser or user.has_elevated_permissions or user.is_mini_admin_role %}
+      <div class="col-md-3">
+        <label for="project_id_manager" class="form-label">Filtrar por Proyecto:</label>
+        <select name="project_id" id="project_id_manager" class="form-select form-select-sm">
+          <option value="">Todos los Proyectos</option>
+          {% for proj in available_projects %}
+            <option value="{{ proj.id_project }}" {% if current_project_filter == proj.id_project|stringformat:"s" %}selected{% endif %}>
+              {{ proj.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+      <div class="col-md-3">
+        <label for="status_manager" class="form-label">Filtrar por Estado:</label>
+        <select name="status" id="status_manager" class="form-select form-select-sm">
+          <option value="">Todos los Estados</option>
+          {% for value, display_name in status_choices %}
+            <option value="{{ value }}" {% if current_status_filter == value %}selected{% endif %}>{{ display_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-secondary btn-sm w-100">Aplicar Filtros</button>
+      </div>
+    </div>
+  </form>
+
+  {% if factors %}
+    <div class="list-group">
+      {% for factor in factors %}
+      <div class="list-group-item list-group-item-action factor-card-item mb-2 shadow-sm">
+        <div class="d-flex w-100 justify-content-between">
+          <div>
+            <h5 class="mb-1 factor-name">{{ factor.name }}</h5>
+            <p class="mb-1 small factor-project-name">
+              <i class="fas fa-folder-open text-secondary me-1"></i>
+              Proyecto: <strong>{{ factor.project.name }}</strong>
+            </p>
+          </div>
+          <small class="factor-dates text-muted">{{ factor.start_date|date:"d M, Y" }} - {{ factor.end_date|date:"d M, Y" }}</small>
+        </div>
+        
+        <div class="progress mt-1 mb-1" style="height: 10px;">
+          <div class="progress-bar {% if factor.approved_percentage == 100 %}bg-success{% elif factor.approved_percentage > 50 %}bg-info{% elif factor.approved_percentage > 0 %}bg-warning{% else %}bg-secondary{% endif %}"
+               role="progressbar" style="width: {{ factor.approved_percentage }}%;"
+               aria-valuenow="{{ factor.approved_percentage }}" aria-valuemin="0" aria-valuemax="100">
+          </div>
+        </div>
+        <small class="text-muted d-block mb-2">{{ factor.approved_percentage }}% completado - Estado: 
+            <span class="badge 
+                {% if factor.status == 'approved' %}bg-success{% elif factor.status == 'rejected' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                {{ factor.get_status_display }}
+            </span>
+        </small>
+
+        {% if factor.responsables.all %}
+        <div class="mb-2">
+            <small class="text-muted">Responsables: 
+                {% for resp in factor.responsables.all|slice:":3" %}
+                    <span class="badge bg-light text-dark border">{{ resp.get_full_name }}</span>
+                {% empty %}
+                    <span class="badge bg-light text-dark border">Ninguno asignado</span>
+                {% endfor %}
+                {% if factor.responsables.all.count > 3 %}
+                    <span class="badge bg-light text-dark border">+{{ factor.responsables.all.count|add:"-3" }} más</span>
+                {% endif %}
+            </small>
+        </div>
+        {% endif %}
+        
+        <div class="factor-actions mt-auto text-end">
+          <a href="{% url 'factor_detail' factor.pk %}" class="btn btn-outline-primary btn-sm" title="Ver Factor {{ factor.name }}" aria-label="Ver Factor {{ factor.name }}">
+              <i class="fas fa-eye"></i>
+          </a>
+            {% comment %} Usar el template tag para verificar el permiso de edición {% endcomment %}
+            {% user_can_edit_factor request.user factor as can_edit_this_factor %}
+            {% if can_edit_this_factor %}
+              <a href="{% url 'factor_edit' factor.pk %}" class="btn btn-outline-secondary btn-sm ms-1" title="Editar Factor {{ factor.name }}" aria-label="Editar Factor {{ factor.name }}">
+                  <i class="fas fa-edit"></i>
+              </a>
+            {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+    <div class="alert alert-info mt-3" role="alert">
+      No hay factores para mostrar que coincidan con los filtros actuales.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

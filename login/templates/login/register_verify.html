@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Registro – Paso 2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'login/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'login/css/login.css' %}">
+  <link rel="stylesheet" href="{% static 'login/css/auth-extra.css' %}">
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <img src="{% static 'login/imgs/icesi_logo.png' %}" alt="Logo ICESI" class="login-logo">
+    <h2>Verificar correo</h2>
+    <p style="margin: 0 1rem 1rem; font-size: 0.95rem; color: var(--gris); text-align: center;">
+      Enviamos un código a <strong>{{ email }}</strong>. Escríbelo para activar tu cuenta.
+    </p>
+
+    <form method="post" class="login-form">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="alert alert-error">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="form-group">
+        {{ form.codigo.label_tag }}
+        {{ form.codigo }}
+        {% for error in form.codigo.errors %}
+          <small class="error-message">{{ error }}</small>
+        {% endfor %}
+      </div>
+
+      <button type="submit" class="btn btn-primary login-btn">Confirmar</button>
+      <p class="form-links">
+        <a href="{% url 'register_start' %}">¿Volver a registro?</a>
+      </p>
+    </form>
+  </div>
+  <script src="{% static 'core/js/login-adapt.js' %}" defer></script>
+  <script src="{% static 'login/js/auth-extra.js' %}"></script>
+</body>
+</html>

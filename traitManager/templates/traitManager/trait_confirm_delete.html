@@ -1,0 +1,56 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Confirmar Eliminación de Característica{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'global/styles.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  {% if object.factor.project %}
+    <li class="breadcrumb-item"><a href="{% url 'project_detail' object.factor.project.pk %}"><span style="font-size: 14px;color: white;">{{ object.factor.project.name }}</span></a></li>
+  {% endif %}
+  {% if object.factor %}
+    <li class="breadcrumb-item"><a href="{% url 'factor_detail' object.factor.pk %}"><span style="font-size: 14px;color: white;">{{ object.factor.name }}</span></a></li>
+  {% endif %}
+  <li class="breadcrumb-item"><a href="{% url 'trait_list' %}?factor_id={{ object.factor.pk }}"><span style="font-size: 14px;color: white;">Características</span></a></li>
+  {% if object %}
+    <li class="breadcrumb-item"><a href="{% url 'trait_detail' object.pk %}"><span style="font-size: 14px;color: white;">{{ object.name|truncatechars:30 }}</span></a></li>
+  {% endif %}
+  <li class="breadcrumb-item active" aria-current="page">
+    <span style="font-size: 14px;color: white;">Eliminar</span>
+  </li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="card shadow-sm border-danger">
+        <div class="card-header bg-danger text-white">
+          <h2 class="mb-0">Confirmar Eliminación</h2>
+        </div>
+        <div class="card-body">
+          <p>¿Estás seguro de que deseas eliminar la característica <strong>"{{ delete_target_name|default:object.name }}"</strong>?</p>
+          <p class="text-danger"><strong>Advertencia:</strong> Esta acción no se puede deshacer. Todos los aspectos asociados a esta característica también serán eliminados.</p>
+          <p>Esta característica pertenece al factor: <strong>{{ parent_factor_name|default:object.factor.name }}</strong>.</p>
+          
+          <form method="post">
+            {% csrf_token %}
+            <div class="d-flex justify-content-end mt-4">
+            <a href="{% if object %}{% url 'trait_detail' object.pk %}{% else %}{% url 'trait_list' %}?factor_id={{ object.factor.pk }}{% endif %}" class="btn btn-outline-secondary me-2" title="Cancelar Eliminación" aria-label="Cancelar Eliminación">
+                <i class="fas fa-times"></i>
+            </a>
+            <button type="submit" class="btn btn-danger" title="Confirmar Eliminación de la Característica" aria-label="Confirmar Eliminación de la Característica">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
